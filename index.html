@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>空教室统计工具 · 招生简章分析</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:"Microsoft YaHei","PingFang SC",-apple-system,"Segoe UI",sans-serif;background:#f5f6f8;color:#1f2328}
+header{height:52px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;
+  gap:14px;padding:0 18px;position:sticky;top:0;z-index:9}
+header h1{font-size:16px;font-weight:700;white-space:nowrap}
+header .desc{font-size:12.5px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .sp{flex:1}
+header a{font-size:12.5px;color:#2f6fed;text-decoration:none;padding:5px 12px;border:1px solid #e5e7eb;
+  border-radius:8px;white-space:nowrap}
+header a:hover{border-color:#2f6fed;background:#f0f5ff}
+iframe{display:block;width:100%;height:calc(100vh - 52px);border:0;background:#fff}
+@media (max-width:640px){header .desc{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>空教室统计工具</h1>
+  <span class="desc">上传招生简章 Excel → 自动统计周末空教室 / 全周排课 / 晚课情况，数据仅在浏览器本地解析</span>
+  <span class="sp"></span>
+  <a href="outputs/%E7%A9%BA%E6%95%99%E5%AE%A4%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7.html" target="_blank" rel="noopener">新窗口打开</a>
+  <a href="https://github.com/wqz93/kongJiaoShi" target="_blank" rel="noopener">GitHub 源码</a>
+</header>
+<iframe src="outputs/%E7%A9%BA%E6%95%99%E5%AE%A4%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7.html"
+        title="空教室统计工具" loading="eager"></iframe>
+</body>
+</html>
