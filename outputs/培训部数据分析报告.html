@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>培训部数据分析报告（2024–2026）</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f7fa;
+    --card:#ffffff;
+    --ink:#1a2233;
+    --ink-2:#4a5568;
+    --ink-3:#7b8794;
+    --line:#e3e8ef;
+    --brand:#1f6feb;
+    --brand-soft:#eaf1fe;
+    --up:#d92d20;      /* 中国习惯：涨/风险为红 */
+    --down:#0f9d58;    /* 跌/改善为绿 */
+    --warn:#b54708;
+    --warn-bg:#fff6ed;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Source Han Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px 80px;}
+
+  /* ---------- 封面 ---------- */
+  .cover{
+    background:linear-gradient(135deg,#1f6feb 0%,#3b82f6 45%,#0ea5e9 100%);
+    color:#fff;
+    padding:64px 24px 56px;
+    margin-bottom:0;
+  }
+  .cover-inner{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .cover .tag{
+    display:inline-block;font-size:12px;letter-spacing:2px;
+    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    padding:5px 14px;border-radius:20px;margin-bottom:22px;
+  }
+  .cover h1{font-size:38px;line-height:1.3;margin:0 0 14px;font-weight:700;letter-spacing:.5px;}
+  .cover .sub{font-size:16px;opacity:.92;margin:0 0 30px;font-weight:400;}
+  .cover .meta{display:flex;flex-wrap:wrap;gap:12px 40px;font-size:14px;opacity:.95;}
+  .cover .meta b{font-weight:600;}
+
+  /* ---------- 通用区块 ---------- */
+  section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:32px 34px;margin-top:26px;box-shadow:0 1px 3px rgba(16,24,40,.04);}
+  h2{font-size:22px;margin:0 0 6px;display:flex;align-items:center;gap:10px;font-weight:700;}
+  h2 .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:9px;background:var(--brand-soft);color:var(--brand);
+    font-size:15px;font-weight:700;flex:none;
+  }
+  h3{font-size:16px;margin:28px 0 12px;color:var(--ink);font-weight:600;
+    padding-left:11px;border-left:3px solid var(--brand);}
+  h4{font-size:14px;margin:20px 0 10px;color:var(--ink-2);font-weight:600;}
+  p{margin:10px 0;color:var(--ink-2);font-size:14.5px;}
+  .lead{font-size:15px;color:var(--ink-2);margin-top:4px;}
+
+  /* KPI */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin:24px 0 6px;}
+  .kpi{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .kpi .k-label{font-size:12.5px;color:var(--ink-3);margin-bottom:8px;}
+  .kpi .k-value{font-size:26px;font-weight:700;letter-spacing:-.5px;color:var(--ink);}
+  .kpi .k-value small{font-size:14px;font-weight:600;color:var(--ink-3);margin-left:2px;}
+  .kpi .k-delta{font-size:12.5px;margin-top:6px;font-weight:600;}
+  .up{color:var(--up);} .down{color:var(--down);} .flat{color:var(--ink-3);}
+
+  /* 表格 */
+  .tbl-scroll{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:10px;}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;min-width:520px;}
+  th,td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{background:#f8fafc;color:var(--ink-2);font-weight:600;font-size:12.5px;
+    position:sticky;top:0;border-bottom:1.5px solid #d6dde8;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#fafcff;}
+  tr.total td{font-weight:700;background:#f8fafc;}
+  tr.total:hover td{background:#f1f6ff;}
+  .col-hi{background:var(--brand-soft)!important;font-weight:600;}
+
+  /* 图表 */
+  .chart-box{position:relative;height:340px;margin:18px 0 6px;}
+  .chart-box.tall{height:400px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media(max-width:760px){.grid-2{grid-template-columns:1fr;}}
+  .chart-title{font-size:14px;font-weight:600;color:var(--ink);margin:0 0 2px;text-align:center;}
+  .chart-note{font-size:12px;color:var(--ink-3);text-align:center;margin:2px 0 0;}
+
+  /* 洞察卡 */
+  .insight{background:#fbfcfe;border:1px solid var(--line);border-left:4px solid var(--brand);
+    border-radius:0 10px 10px 0;padding:14px 18px;margin:12px 0;font-size:14px;color:var(--ink-2);}
+  .insight b{color:var(--ink);}
+  .alert{background:var(--warn-bg);border:1px solid #fed7aa;border-left:4px solid var(--warn);
+    border-radius:0 10px 10px 0;padding:14px 18px;margin:12px 0;font-size:14px;color:#7a3f0c;}
+  .alert b{color:#8a3d05;}
+  ul.clean{margin:10px 0;padding-left:20px;color:var(--ink-2);font-size:14.5px;}
+  ul.clean li{margin:7px 0;}
+  .hl{background:linear-gradient(transparent 62%,#ffe8a3 62%);font-weight:600;color:var(--ink);}
+  footer{text-align:center;color:var(--ink-3);font-size:12.5px;margin-top:34px;padding-top:20px;}
+  .badge{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:20px;
+    background:var(--brand-soft);color:var(--brand);font-weight:600;margin-left:6px;vertical-align:middle;}
+  .badge.warnb{background:var(--warn-bg);color:var(--warn);}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-inner">
+    <span class="tag">DATA REPORT · 内部数据</span>
+    <h1>培训部经营数据分析报告</h1>
+    <p class="sub">2024 — 2026 年营收 · 人次 · 班级 · 退费全景洞察</p>
+    <div class="meta">
+      <div><b>数据来源：</b>2024-2026年培训部数据分析.xlsx</div>
+      <div><b>数据范围：</b>3 个年度 / 3 个校区 / 4 个季节口径</div>
+      <div><b>报告日期：</b>2026-09-27</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ============ 01 摘要 ============ -->
+<section>
+  <h2><span class="num">01</span>执行摘要</h2>
+  <p class="lead">三年间培训部整体营收走出「V 型曲线」：2025 年微降触底后，2026 年强势回升创三年新高。但营收增长的表象之下，隐藏着“班级数膨胀、报名人次萎缩”的结构性矛盾，以及暑期退费率持续恶化两大风险信号。</p>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="k-label">2026 年度营收（三季合计）</div>
+      <div class="k-value">¥1,009.9<small>万</small></div>
+      <div class="k-delta up">▲ 同比 +5.88%　三年新高</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">2026 年度报名人次</div>
+      <div class="k-value">15,837<small>人次</small></div>
+      <div class="k-delta down">▼ 同比 −3.75%　连续两年下滑</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">2026 年度开班总数</div>
+      <div class="k-value">1,372<small>个班</small></div>
+      <div class="k-delta up">▲ 同比 +17.67%　三年连增</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">2026 暑期退费率</div>
+      <div class="k-value">2.09<small>%</small></div>
+      <div class="k-delta up">▲ 同比 +29.77%　三年最高</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <b>一句话结论：</b>三年营收 <span class="hl">+5.09%</span>（960.98 万 → 1,009.92 万），但人次 <span class="hl">−4.18%</span>（16,527 → 15,837）。<b>增长靠“多开班、涨价”驱动，而非“更多学员”驱动</b>——单班平均人数已从 15.8 人降至 11.5 人（−27%）。这是本报告最需要关注的核心矛盾。
+  </div>
+</section>
+
+<!-- ============ 02 整体趋势 ============ -->
+<section>
+  <h2><span class="num">02</span>三年整体趋势</h2>
+  <p>先看三个年度核心规模的走势。营收与班级数同向上行，唯有人次逆向下滑，形成明显的“剪刀差”。</p>
+
+  <div class="chart-box tall"><canvas id="c_trend"></canvas></div>
+  <p class="chart-note">图1　2024–2026 年营收（柱，左轴）、报名人次与班级数（折线，右轴）趋势</p>
+
+  <h3>核心指标三年明细</h3>
+  <div class="tbl-scroll">
+    <table>
+      <thead>
+        <tr><th>年度</th><th>营收合计（元）</th><th>营收同比</th><th>报名人次</th><th>人次同比</th><th>班级数</th><th>班级同比</th><th>平均班额（人/班）</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2024</td><td>9,609,843.10</td><td class="flat">—</td><td>16,527</td><td class="flat">—</td><td>1,044</td><td class="flat">—</td><td>15.83</td></tr>
+        <tr><td>2025</td><td>9,538,295.26</td><td class="down">−0.74%</td><td>16,454</td><td class="down">−0.44%</td><td>1,166</td><td class="up">+11.69%</td><td>14.11</td></tr>
+        <tr><td>2026</td><td>10,099,211.14</td><td class="up">+5.88%</td><td>15,837</td><td class="down">−3.75%</td><td>1,372</td><td class="up">+17.67%</td><td>11.54</td></tr>
+        <tr class="total"><td>三年累计</td><td>+5.09%</td><td>—</td><td>−4.18%</td><td>—</td><td>+31.42%</td><td>—</td><td>−27.1%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight">
+    <b>读法：</b>营收先平后升，班级数持续扩张，人次却掉头向下。2025 年是<b>拐点年</b>——营收与人次双微降，但班级数已开始大增，说明此时已启动“多开班”策略来对冲人数流失。
+  </div>
+</section>
+
+<!-- ============ 03 季节结构 ============ -->
+<section>
+  <h2><span class="num">03</span>分季节营收结构</h2>
+  <p>秋季是全年营收的绝对主力，暑期则相对薄弱。三年间季节性规律保持稳定，但各季节的强弱程度有所变化。</p>
+
+  <div class="chart-box tall"><canvas id="c_season"></canvas></div>
+  <p class="chart-note">图2　分季节营收三年对比（单位：万元）</p>
+
+  <div class="grid-2">
+    <div>
+      <h4>2026 年季节营收占比</h4>
+      <div class="chart-box"><canvas id="c_pie"></canvas></div>
+      <p class="chart-note">图3　2026 年三季节营收结构</p>
+    </div>
+    <div>
+      <h4>季节营收明细（元）</h4>
+      <div class="tbl-scroll" style="margin-top:10px;">
+        <table style="min-width:auto;">
+          <thead><tr><th>季节</th><th>2024</th><th>2025</th><th>2026</th><th>25/26 同比</th></tr></thead>
+          <tbody>
+            <tr><td>春季</td><td>3,844,916.60</td><td>3,229,166.80</td><td>3,486,973.08</td><td class="up">+7.98%</td></tr>
+            <tr><td>暑期</td><td>2,433,196.50</td><td>2,710,912.00</td><td>2,586,130.95</td><td class="down">−4.60%</td></tr>
+            <tr><td>秋季</td><td>3,331,730.00</td><td>3,598,216.46</td><td>4,026,107.11</td><td class="up">+11.89%</td></tr>
+            <tr class="total"><td>合计</td><td>9,609,843.10</td><td>9,538,295.26</td><td>10,099,211.14</td><td class="up">+5.88%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <b>关键发现：</b>秋季 2026 年营收 <b>402.6 万元</b>，同比 <span class="up">+11.89%</span>，是全公司增长的主引擎；暑期则成为<b>唯一下滑季节</b>（−4.60%），且是人次流失最严重的季节（−9.03%），需要重点排查暑期招生与留存问题。
+  </div>
+</section>
+
+<!-- ============ 04 校区对比 ============ -->
+<section>
+  <h2><span class="num">04</span>校区经营对比</h2>
+  <p>2024 年尚有前埔、镇海、厦港三个校区，2025 年起前埔校区退出，仅剩镇海与厦港双核运营。两校区定位出现明显分化。</p>
+
+  <div class="grid-2">
+    <div>
+      <h4>两校区营收对比（同口径三季合计）</h4>
+      <div class="chart-box"><canvas id="c_campus"></canvas></div>
+      <p class="chart-note">图4　镇海 / 厦港 三季营收合计（万元）</p>
+    </div>
+    <div>
+      <h4>两校区营收占比（2026）</h4>
+      <div class="chart-box"><canvas id="c_campus_pie"></canvas></div>
+      <p class="chart-note">图5　2026 年镇海与厦港营收结构</p>
+    </div>
+  </div>
+
+  <h3>校区营收明细（三季加总，同口径可比）</h3>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>校区</th><th>2024 三季合计</th><th>2025 三季合计</th><th>2026 三季合计</th><th>25/26 同比</th><th>2026 人次</th><th>2026 平均班额</th></tr></thead>
+      <tbody>
+        <tr><td>镇海</td><td>2,445,786.60</td><td>3,096,302.33</td><td>3,599,194.34</td><td class="up">+16.22%</td><td>5,314</td><td>11.06</td></tr>
+        <tr><td>厦港</td><td>5,856,472.50</td><td>6,441,992.93</td><td>6,500,016.80</td><td class="up">+0.90%</td><td>10,523</td><td>12.72</td></tr>
+        <tr><td>前埔<span class="badge warnb">已退出</span></td><td>1,307,584.00</td><td>—</td><td>—</td><td class="flat">—</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight">
+    <b>双核分化：</b>厦港校区体量更大（2026 年三季营收 <b>650 万元</b>，占比 <span class="hl">64.4%</span>），但增长趋于饱和（同比仅 +0.90%）；镇海校区体量较小（<b>359.9 万元</b>），却是<b>增长引擎</b>（同比 <span class="up">+16.22%</span>）。厦港春季营收（232.6 万）甚至反超镇海（116.1 万），是人流主力；镇海则在秋季发力（147.0 万），呈现高单价特征。
+  </div>
+
+  <div class="alert">
+    <b>⚠ 数据口径提示：</b>原表中“年度总计”列（9,609,843.10 / 9,538,295.26 / 10,099,211.14）实为<b>全校区全年营收</b>，仅为排版需要被放在某一校区行内，并非该校区单独数据。本报告在校区对比中已统一改用“三季加总”口径，确保可比性。
+  </div>
+</section>
+
+<!-- ============ 05 退费风险 ============ -->
+<section>
+  <h2><span class="num">05</span>退费与质量风险</h2>
+  <p>退费率是培训业务健康度的核心指标。三年数据显示：<b>暑期退费率出现持续性恶化</b>，是当前最突出的经营风险。</p>
+
+  <div class="chart-box tall"><canvas id="c_refund"></canvas></div>
+  <p class="chart-note">图6　分季节退费率三年走势（%）</p>
+
+  <h3>退费率与退费金额明细</h3>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>季节</th><th>2024 退费率</th><th>2025 退费率</th><th>2026 退费率</th><th>2026 退费金额（元）</th><th>25/26 退费率同比</th></tr></thead>
+      <tbody>
+        <tr><td>春季</td><td>1.4195%</td><td>1.3739%</td><td>1.5825%</td><td>56,067.18</td><td class="up">+15.18%</td></tr>
+        <tr><td>暑期</td><td>1.3089%</td><td>1.6114%</td><td class="col-hi">2.0912%</td><td>55,235.21</td><td class="up">+29.77%</td></tr>
+        <tr><td>秋季</td><td>1.0729%</td><td>1.4556%</td><td>1.1685%</td><td>47,602.64</td><td class="down">−19.72%</td></tr>
+        <tr class="total"><td>年度合计</td><td>1.2716%</td><td>1.4723%</td><td>1.5491%</td><td>158,905.03</td><td class="up">+5.21%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert">
+    <b>⚠ 风险聚焦：</b>暑期退费率三年连升（1.31% → 1.61% → <b>2.09%</b>），2026 年同比再涨 29.77%，为三年最高值。暑期退费金额 5.52 万元，同比 +24.41%。<b>暑期是营收唯一下滑的季节，同时又叠加退费恶化——两者叠加会显著侵蚀利润，建议优先启动暑期课程体验与退费原因专项复盘。</b>
+  </div>
+
+  <div class="insight">
+    <b>利好信号：</b>秋季退费管控成效显著，2026 年退费率降至 <b>1.1685%</b>，同比 <span class="down">−19.72%</span>，退费金额同比 −10.44%。秋季的积极做法值得提炼并复制到暑期。
+  </div>
+</section>
+
+<!-- ============ 06 班级类别 ============ -->
+<section>
+  <h2><span class="num">06</span>班级类别营收结构</h2>
+  <p>团课类班级（预备团 + 科技团）在暑期与秋季的营收表现对比，反映特色课程的增长潜力。</p>
+
+  <div class="chart-box tall"><canvas id="c_class"></canvas></div>
+  <p class="chart-note">图7　班级类别暑期 / 秋季营收对比（单位：元）</p>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>班级类别</th><th>暑期营收（元）</th><th>秋季营收（元）</th><th>环比变化</th><th>两季合计</th></tr></thead>
+      <tbody>
+        <tr><td>预备团（厦港）</td><td>201,899.00</td><td>190,656.00</td><td class="down">−5.57%</td><td>392,555.00</td></tr>
+        <tr><td>科技团（合计）</td><td>174,097.00</td><td>326,300.00</td><td class="up">+87.42%</td><td>500,397.00</td></tr>
+        <tr><td>　└ 智能科创（镇海）</td><td>145,000.00</td><td>173,828.00</td><td class="up">+19.88%</td><td>318,828.00</td></tr>
+        <tr><td>　└ 模型（厦港）</td><td>29,097.00</td><td>152,472.00</td><td class="up">+424.01%</td><td>181,569.00</td></tr>
+        <tr class="total"><td>合计</td><td>375,996.00</td><td>516,956.00</td><td class="up">+37.49%</td><td>892,952.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight">
+    <b>亮点：</b>「模型（厦港）」秋季营收从暑期 2.91 万暴涨至 15.25 万（<span class="up">+424%</span>），是增速最快的课程品类；「科技团」整体秋季节奏强劲（+87.42%）。预备团则相对平稳略降（−5.57%）。<b>建议评估模型课程的可复制性，向镇海校区或其他季节推广。</b>
+  </div>
+</section>
+
+<!-- ============ 07 结论建议 ============ -->
+<section>
+  <h2><span class="num">07</span>结论与行动建议</h2>
+
+  <h3>四个核心结论</h3>
+  <ul class="clean">
+    <li><b>营收 V 型复苏，但质量暗藏隐患。</b>2025 年触底（−0.74%），2026 年回升至新高（1,009.92 万，+5.88%），但增长来自“多开班 + 结构性提价”，而非学员规模扩大。</li>
+    <li><b>“多班少人”是最突出的结构矛盾。</b>三年班级数 +31.4%，人次 −4.2%，平均班额从 15.8 人降至 11.5 人（−27%），单班效益持续摊薄。</li>
+    <li><b>暑期是最大风险点。</b>营收唯一下滑（−4.60%）+ 人次下滑最多（−9.03%）+ 退费率最高且持续恶化（2.09%，+29.77%），三重压力叠加。</li>
+    <li><b>校区双核分化明显。</b>厦港体量大但增长停滞（+0.90%），镇海体量小却是增长引擎（+16.22%），资源投放应向高增长校区倾斜验证。</li>
+  </ul>
+
+  <h3>五项行动建议</h3>
+  <ul class="clean">
+    <li><b>① 专项治理暑期退费。</b>建立暑期退费原因分类台账（课程质量 / 时间冲突 / 价格 / 服务），设定 2027 暑期退费率回落至 1.6% 以内的目标，并复制秋季的退费管控经验。</li>
+    <li><b>② 止住人次下滑。</b>重点复盘暑期招生渠道转化与续报率，把“招生量”而非“开班量”作为核心考核指标，避免以多开班掩盖单班人数不足。</li>
+    <li><b>③ 优化班型结构。</b>针对平均班额持续下降，重新评估开班门槛（如最低成班人数），对长期低效小班进行合并或调整，提升单班产出。</li>
+    <li><b>④ 放大高增长品类与校区。</b>提炼「模型（厦港）」秋季爆发的成功要素，评估向镇海及其他季节复制；总结镇海 +16.22% 的增长打法，向厦港输出。</li>
+    <li><b>⑤ 统一并规范数据口径。</b>原表“年度总计”列与校区行混排、2024 年前埔数据归属不清，建议建立标准报表模板，明确年度总计独立成列，保障同比口径一致。</li>
+  </ul>
+
+  <div class="insight" style="border-left-color:var(--down);">
+    <b>优先次序建议：</b>先「保质量」（暑期退费治理）→ 再「稳规模」（人次止跌）→ 后「提效率」（班型优化与品类复制）。
+  </div>
+</section>
+
+<footer>
+  数据来源：2024-2026年培训部数据分析.xlsx ｜ 报告生成日期：2026-09-27<br>
+  本报告所有金额单位为人民币元，图表基于原表原始数值绘制，未做平滑处理。
+</footer>
+
+</div>
+
+<script>
+Chart.defaults.font.family = '"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
+Chart.defaults.color = '#4a5568';
+Chart.defaults.font.size = 12.5;
+const RMB = v => '¥' + (v/10000).toFixed(1) + '万';
+const UP='#d92d20', DOWN='#0f9d58', BRAND='#1f6feb', TEAL='#0ea5e9', AMBER='#f59e0b', VIOLET='#7c3aed', SLATE='#94a3b8';
+const grid = {color:'#eef2f7'};
+
+// 图1 趋势
+new Chart(document.getElementById('c_trend'), {
+  data:{
+    labels:['2024','2025','2026'],
+    datasets:[
+      {type:'bar', label:'营收（元）', data:[9609843.10,9538295.26,10099211.14],
+       backgroundColor:'rgba(31,111,235,.72)', borderRadius:7, yAxisID:'y', order:3,
+       barPercentage:.5},
+      {type:'line', label:'报名人次', data:[16527,16454,15837],
+       borderColor:AMBER, backgroundColor:AMBER, tension:.35, yAxisID:'y1', order:1,
+       pointRadius:5, pointBackgroundColor:'#fff', pointBorderWidth:2.5, borderWidth:3},
+      {type:'line', label:'班级数', data:[1044,1166,1372],
+       borderColor:VIOLET, backgroundColor:VIOLET, tension:.35, yAxisID:'y1', order:2,
+       pointRadius:5, pointBackgroundColor:'#fff', pointBorderWidth:2.5, borderWidth:3, borderDash:[6,4]}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:16}},
+      tooltip:{callbacks:{label:c=>{
+        if(c.dataset.label.includes('营收')) return '营收：'+c.parsed.y.toLocaleString()+' 元';
+        if(c.dataset.label.includes('人次')) return '人次：'+c.parsed.y.toLocaleString()+' 人次';
+        return '班级数：'+c.parsed.y+' 个';
+      }}}},
+    scales:{
+      y:{position:'left',beginAtZero:false,min:8500000,grid:grid,
+         ticks:{callback:v=>(v/10000).toFixed(0)+'万'},title:{display:true,text:'营收（元）'}},
+      y1:{position:'right',beginAtZero:false,min:900,max:17500,grid:{display:false},
+         ticks:{color:AMBER},title:{display:true,text:'人次 / 班级数',color:AMBER}},
+      x:{grid:{display:false}}
+    }}
+});
+
+// 图2 分季节营收
+new Chart(document.getElementById('c_season'), {
+  type:'bar',
+  data:{
+    labels:['春季','暑期','秋季'],
+    datasets:[
+      {label:'2024',data:[3844916.60,2433196.50,3331730.00],backgroundColor:'#c7d9f7',borderRadius:6},
+      {label:'2025',data:[3229166.80,2710912.00,3598216.46],backgroundColor:'#7ea9ee',borderRadius:6},
+      {label:'2026',data:[3486973.08,2586130.95,4026107.11],backgroundColor:BRAND,borderRadius:6}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:16}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+'：'+c.parsed.y.toLocaleString()+' 元'}}},
+    scales:{y:{beginAtZero:true,grid:grid,ticks:{callback:v=>(v/10000).toFixed(0)+'万'},
+      title:{display:true,text:'营收（元）'}},x:{grid:{display:false}}}}
+});
+
+// 图3 季节饼图
+new Chart(document.getElementById('c_pie'), {
+  type:'doughnut',
+  data:{labels:['春季 348.7万','暑期 258.6万','秋季 402.6万'],
+    datasets:[{data:[3486973.08,2586130.95,4026107.11],
+      backgroundColor:[BRAND,AMBER,DOWN],borderColor:'#fff',borderWidth:3}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
+    plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:14}},
+      tooltip:{callbacks:{label:c=>c.label+'（'+(c.parsed/10099211.14*100).toFixed(1)+'%）'}}}}
+});
+
+// 图4 校区营收
+new Chart(document.getElementById('c_campus'), {
+  type:'bar',
+  data:{labels:['镇海','厦港','前埔'],
+    datasets:[
+      {label:'2024',data:[2445786.60,5856472.50,1307584.00],backgroundColor:'#c7d9f7',borderRadius:6},
+      {label:'2025',data:[3096302.33,6441992.93,null],backgroundColor:'#7ea9ee',borderRadius:6},
+      {label:'2026',data:[3599194.34,6500016.80,null],backgroundColor:BRAND,borderRadius:6}
+    ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:14}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+'：'+(c.parsed.y?c.parsed.y.toLocaleString()+' 元':'无数据')}}},
+    scales:{y:{beginAtZero:true,grid:grid,ticks:{callback:v=>(v/10000).toFixed(0)+'万'}},x:{grid:{display:false}}}}
+});
+
+// 图5 校区占比
+new Chart(document.getElementById('c_campus_pie'), {
+  type:'doughnut',
+  data:{labels:['厦港 650.0万','镇海 359.9万'],
+    datasets:[{data:[6500016.80,3599194.34],
+      backgroundColor:[BRAND,TEAL],borderColor:'#fff',borderWidth:3}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
+    plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:14}},
+      tooltip:{callbacks:{label:c=>c.label+'（'+(c.parsed/10099211.14*100).toFixed(1)+'%）'}}}}
+});
+
+// 图6 退费率
+new Chart(document.getElementById('c_refund'), {
+  type:'line',
+  data:{labels:['2024','2025','2026'],
+    datasets:[
+      {label:'春季',data:[1.4195,1.3739,1.5825],borderColor:BRAND,backgroundColor:BRAND,tension:.35,
+       pointRadius:5,pointBackgroundColor:'#fff',pointBorderWidth:2.5,borderWidth:3},
+      {label:'暑期',data:[1.3089,1.6114,2.0912],borderColor:UP,backgroundColor:UP,tension:.35,
+       pointRadius:5,pointBackgroundColor:'#fff',pointBorderWidth:2.5,borderWidth:3.5},
+      {label:'秋季',data:[1.0729,1.4556,1.1685],borderColor:DOWN,backgroundColor:DOWN,tension:.35,
+       pointRadius:5,pointBackgroundColor:'#fff',pointBorderWidth:2.5,borderWidth:3},
+      {label:'年度合计',data:[1.2716,1.4723,1.5491],borderColor:SLATE,backgroundColor:SLATE,tension:.35,
+       pointRadius:4,pointBackgroundColor:'#fff',pointBorderWidth:2,borderWidth:2.5,borderDash:[7,4]}
+    ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:16}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+'退费率：'+c.parsed.y.toFixed(3)+'%'}}},
+    scales:{y:{beginAtZero:false,min:0.9,max:2.3,grid:grid,ticks:{callback:v=>v.toFixed(1)+'%'},
+      title:{display:true,text:'退费率'}},x:{grid:{display:false}}}}
+});
+
+// 图7 班级类别
+new Chart(document.getElementById('c_class'), {
+  type:'bar',
+  data:{labels:['预备团（厦港）','智能科创（镇海）','模型（厦港）'],
+    datasets:[
+      {label:'暑期',data:[201899.00,145000.00,29097.00],backgroundColor:AMBER,borderRadius:6},
+      {label:'秋季',data:[190656.00,173828.00,152472.00],backgroundColor:VIOLET,borderRadius:6}
+    ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:16}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+'：'+c.parsed.y.toLocaleString()+' 元'}}},
+    scales:{y:{beginAtZero:true,grid:grid,ticks:{callback:v=>v.toLocaleString()},
+      title:{display:true,text:'营收（元）'}},x:{grid:{display:false}}}}
+});
+</script>
+</body>
+</html>

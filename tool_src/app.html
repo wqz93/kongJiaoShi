@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>空教室统计工具 · 招生简章分析</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --pri:#2f6fed; --pri-d:#1e4fb8; --bg:#f5f6f8; --card:#fff; --bd:#e5e7eb;
+  --tx:#1f2328; --mut:#6b7280; --red:#d92d20; --redbg:#fee4e2; --grn:#12805c; --grnbg:#e7f6ef;
+  --yel:#fef0c7; --eve:#eef4ff;
+}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Microsoft YaHei","PingFang SC",-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.6}
+.wrap{max-width:1860px;margin:0 auto;padding:24px 20px 70px}
+h1{font-size:23px;margin:0 0 4px;font-weight:700}
+.sub{color:var(--mut);font-size:13px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;margin-bottom:18px}
+.card h3{margin:0 0 12px;font-size:15px;font-weight:700}
+h2{font-size:17px;margin:26px 0 12px;padding-left:10px;border-left:4px solid var(--pri)}
+
+#drop{border:2px dashed #c7d2fe;border-radius:14px;background:#f8faff;padding:34px 20px;text-align:center;cursor:pointer;transition:.15s}
+#drop:hover,#drop.over{border-color:var(--pri);background:#eef3ff}
+#drop .big{font-size:16px;font-weight:600;margin-bottom:6px}
+#drop .sm{color:var(--mut);font-size:12.5px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;border:1px solid var(--bd);
+  background:#fff;color:var(--tx);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.btn:hover{border-color:var(--pri);color:var(--pri)}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.pri:hover{background:var(--pri-d);color:#fff}
+.btn.sm{padding:5px 11px;font-size:12px}
+
+details{margin-bottom:12px}
+summary{cursor:pointer;font-weight:600;font-size:14px;padding:7px 0;user-select:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px 14px;margin-top:10px}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:12px;color:var(--mut)}
+.fld input,.fld select{padding:6px 9px;border:1px solid #d1d5db;border-radius:7px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:var(--tx)}
+.fld input:focus,.fld select:focus{border-color:var(--pri)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-top:8px}
+.slot{display:flex;gap:6px;align-items:center;background:#f8fafc;border:1px solid #eef1f5;border-radius:8px;padding:6px 8px}
+.slot input[type=text]{width:76px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:12.5px;text-align:center}
+.slot input.tm{width:60px}
+.chk{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.chk label{display:inline-flex;align-items:center;gap:4px;background:#f8fafc;border:1px solid #eef1f5;border-radius:20px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chk input{accent-color:var(--pri)}
+.hint{font-size:12px;color:var(--mut);margin-top:6px}
+
+.cards{display:flex;gap:14px;flex-wrap:wrap}
+.ccard{flex:1;min-width:320px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:15px 18px;border-left:5px solid var(--pri)}
+.ccard h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{background:#f8fafc;border:1px solid #eef1f5;border-radius:8px;padding:6px 11px;min-width:78px}
+.stat .n{font-size:18px;font-weight:700;line-height:1.25}
+.stat .l{font-size:11.5px;color:var(--mut)}
+.stat.warn .n{color:var(--red)} .stat.ok .n{color:var(--grn)} .stat.info .n{color:var(--pri)} .stat.ev .n{color:#1e429f}
+
+.toolbar{display:flex;gap:9px;align-items:center;margin:10px 0;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:6px 11px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;font-family:inherit;background:#fff}
+.toolbar input:focus,.toolbar select:focus{border-color:var(--pri)}
+.tag{font-size:12px;color:var(--mut);background:#fff;border:1px solid var(--bd);border-radius:20px;padding:3px 11px}
+.tbox{border:1px solid var(--bd);border-radius:10px;overflow:auto;max-height:80vh;background:#fff}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+th,td{border-bottom:1px solid #eceef1;border-right:1px solid #eceef1;padding:5px 8px;vertical-align:middle}
+thead th{background:#eef2f7;color:#1f2937;font-weight:600;white-space:nowrap;position:sticky;top:0;z-index:3;text-align:center}
+thead tr.grp th{background:#e4eaf3;top:0}
+thead tr.sub th{top:31px}
+tbody th{background:#f8fafc;text-align:left;font-weight:600;white-space:nowrap;position:sticky;left:0;z-index:2;border-right:1px solid #e5e7eb}
+tbody td.c{text-align:center}
+td.empty{background:var(--redbg);color:#b42318;font-weight:700;text-align:center}
+td.used{background:var(--grnbg);color:#0a5c3e}
+td.used.conflict{background:var(--yel);color:#93370d}
+td.even{background:#f7f8fa;color:#98a2b3;text-align:center}
+td.even.used{background:var(--eve);color:#1e429f;text-align:center}
+td.used .cn{display:block;font-weight:600;max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td.used .tn{display:block;font-size:11px;opacity:.72}
+td.cmp{min-width:38px;padding:4px 2px;font-size:12px}
+.badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11.5px;font-weight:600}
+.b-full{background:var(--grnbg);color:var(--grn)} .b-gap{background:var(--redbg);color:#b42318}
+tbody tr:hover td{filter:brightness(.97)}
+.legend{margin:14px 0 0}
+.legend span{margin-right:14px;font-size:12px}
+.sw{display:inline-block;width:13px;height:13px;border-radius:3px;vertical-align:-2px;margin-right:5px;border:1px solid #d0d5dd}
+.note{background:#fffaeb;border:1px solid #fedf89;border-radius:10px;padding:11px 15px;margin:12px 0;font-size:13px;color:#7a4b00}
+.err{background:var(--redbg);border:1px solid #fda29b;color:#912018;border-radius:10px;padding:11px 15px;font-size:13px}
+.hide{display:none!important}
+.tabs{display:flex;gap:8px;margin:12px 0 8px;flex-wrap:wrap}
+.tab{padding:6px 16px;border-radius:20px;border:1px solid var(--bd);background:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.tab.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.tab.on.ev{background:#1e429f;border-color:#1e429f}
+.foot{margin-top:34px;color:#9aa1ab;font-size:12px;text-align:center}
+.mut{color:var(--mut);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>空教室统计工具</h1>
+<div class="sub">上传招生简章 Excel（.xls / .xlsx / .csv）｜ 周末达标检查 + 全周 / 工作日 / 晚课排课情况 ｜ 浏览器本地解析，数据不上传</div>
+
+<div class="card">
+  <h3>① 选择文件</h3>
+  <div id="drop">
+    <div class="big">点击选择，或把文件拖到这里</div>
+    <div class="sm">支持 .xls / .xlsx / .csv ｜ 自动识别「区域 / 上课时间 / 教室」等列</div>
+  </div>
+  <input type="file" id="file" accept=".xls,.xlsx,.csv" class="hide">
+  <div id="finfo" class="hide" style="margin-top:12px"></div>
+</div>
+
+<div class="card hide" id="cfgCard">
+  <h3>② 统计参数</h3>
+  <details open>
+    <summary>列映射（自动识别，可手动调整）</summary>
+    <div class="grid" id="colmap"></div>
+  </details>
+  <details open>
+    <summary>考核规则（判定「空教室」）</summary>
+    <div class="grid">
+      <div class="fld" style="grid-column:span 2">
+        <label>考核星期（这些天必须排满，如周六日一定有课）</label>
+        <div class="chk" id="chkdays"></div>
+      </div>
+      <div class="fld"><label>达标节数（自动 = 考核星期数 × 考核节次数）</label><input type="number" id="target" min="1" value="8"></div>
+      <div class="fld"><label>时段归位：最小重叠分钟数</label><input type="number" id="ovmin" min="1" value="30"></div>
+    </div>
+    <div class="hint">考核节次 = 下列「白天节次」；弹性节次（晚间）默认不参与达标判定</div>
+  </details>
+  <details>
+    <summary>节次设置与展示范围</summary>
+    <div class="mut" style="margin-top:6px">白天节次（参与达标判定）</div>
+    <div class="slots" id="dslots"></div>
+    <div class="mut" style="margin-top:10px">弹性节次 / 晚课（默认不参与达标，但单独统计）</div>
+    <div class="slots" id="eslots"></div>
+    <div class="grid" style="margin-top:12px">
+      <div class="fld" style="grid-column:span 2">
+        <label>展示星期（报表覆盖范围，建议全选以看全周）</label>
+        <div class="chk" id="showdays"></div>
+      </div>
+    </div>
+  </details>
+  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button class="btn pri" id="run">开始统计</button>
+    <span class="mut">修改参数后需重新点击统计</span>
+  </div>
+</div>
+
+<div id="err"></div>
+<div id="result" class="hide"></div>
+
+<div class="foot">空教室统计工具 · 本地离线运行</div>
+</div>
+
+<script>/*XLSX_LIB*/</script>
+<script>
+/* ===================== 常量与状态 ===================== */
+const DAYS = ["周一","周二","周三","周四","周五","周六","周日"];
+const WORKDAYS = ["周一","周二","周三","周四","周五"];
+let RAW = [], HEADER = [], ROWS = [], COLS = {};
+let RESULT = null, curRegion = null, curView = "weekend", sortKey = null, sortAsc = true, inclEve = false;
+
+const DEF_D = [
+  {name:"上午第1节", a:"08:30", b:"10:00"},
+  {name:"上午第2节", a:"10:10", b:"11:40"},
+  {name:"下午第1节", a:"14:00", b:"15:30"},
+  {name:"下午第2节", a:"15:40", b:"17:10"},
+];
+const DEF_E = [
+  {name:"晚间第1节", a:"17:20", b:"18:50"},
+  {name:"晚间第2节", a:"19:00", b:"20:30"},
+];
+let SLOTS = JSON.parse(JSON.stringify(DEF_D));
+let ESLOTS = JSON.parse(JSON.stringify(DEF_E));
+let CHKDAYS = ["周六","周日"];
+let SHOWDAYS = DAYS.slice();
+
+const FIELD_HINT = {
+  region:["区域","校区","报名入口"], time:["上课时间","上课时段","时间"],
+  room:["教室","场地","课室"], name:["班级名称","班级"], teacher:["教师","老师","任课"],
+  major:["专业","科目"], recruited:["已招","已招学员","缴费人数"], status:["状态"]
+};
+const FIELDS = [["region","区域列 *"],["time","上课时间列 *"],["room","教室列 *"],["name","班级名称列"],
+  ["teacher","教师列"],["major","专业列"],["recruited","已招学员列"],["status","状态列"]];
+
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const mm = s => { const [h,m] = String(s).split(":"); return (+h)*60 + (+m); };
+const short = n => String(n).replace("第","").replace("节","");
+const K = (rg,rm,d,k) => rg+"\u0001"+rm+"\u0001"+d+"\u0001"+k;
+
+/* ===================== 文件读取 ===================== */
+const drop = document.getElementById("drop"), fin = document.getElementById("file");
+drop.onclick = () => fin.click();
+["dragenter","dragover"].forEach(e => drop.addEventListener(e, ev => {ev.preventDefault(); drop.classList.add("over");}));
+["dragleave","drop"].forEach(e => drop.addEventListener(e, ev => {ev.preventDefault(); drop.classList.remove("over");}));
+drop.addEventListener("drop", ev => { if(ev.dataTransfer.files[0]) readFile(ev.dataTransfer.files[0]); });
+fin.onchange = () => { if(fin.files[0]) readFile(fin.files[0]); };
+
+function readFile(f){
+  document.getElementById("err").innerHTML = "";
+  const fr = new FileReader();
+  fr.onload = e => {
+    try{
+      const isXls = /\.xls$/i.test(f.name);
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:"array", ...(isXls?{codepage:936}:{})});
+      const sn = wb.SheetNames[0];
+      RAW = XLSX.utils.sheet_to_json(wb.Sheets[sn], {header:1, defval:"", raw:false, blankrows:false});
+      if(!RAW.length) throw new Error("工作表为空");
+      detectHeader();
+      document.getElementById("finfo").className = "";
+      document.getElementById("finfo").innerHTML =
+        `<b>${esc(f.name)}</b> ｜ 工作表：${esc(sn)} ｜ ${RAW.length} 行 ｜ 表头在第 ${COLS._hr+1} 行`
+        + (wb.SheetNames.length>1 ? ` ｜ 共 ${wb.SheetNames.length} 个工作表（取第一个）` : "");
+      document.getElementById("cfgCard").className = "card";
+      renderColmap();
+      document.getElementById("result").className = "hide";
+    }catch(err){
+      document.getElementById("err").innerHTML = `<div class="err">解析失败：${esc(err.message||err)}</div>`;
+    }
+  };
+  fr.readAsArrayBuffer(f);
+}
+
+function detectHeader(){
+  let hr = -1;
+  for(let i=0; i<Math.min(15, RAW.length); i++){
+    const line = RAW[i].map(c=>String(c||"")).join("|");
+    if(/教室/.test(line) && /(上课)?时间/.test(line)){ hr = i; break; }
+  }
+  if(hr < 0) for(let i=0; i<Math.min(15, RAW.length); i++)
+    if(RAW[i].some(c=>/教室/.test(String(c||"")))){ hr = i; break; }
+  if(hr < 0) hr = 0;
+  COLS._hr = hr;
+  HEADER = RAW[hr].map(c=>String(c||"").trim());
+  ROWS = RAW.slice(hr+1).filter(r => r.some(c=>String(c||"").trim()!==""))
+            .map(r => Object.fromEntries(HEADER.map((h,i)=>[h, r[i]==null?"":r[i]])));
+  const pick = hints => {
+    for(const h of hints){ const idx = HEADER.findIndex(x => x === h); if(idx>=0) return idx; }
+    for(const h of hints){ const idx = HEADER.findIndex(x => x && x.includes(h)); if(idx>=0) return idx; }
+    return HEADER.findIndex(x => x);
+  };
+  for(const [k, hints] of Object.entries(FIELD_HINT)) COLS[k] = pick(hints);
+}
+
+function renderColmap(){
+  document.getElementById("colmap").innerHTML = FIELDS.map(([k,label]) => {
+    const opts = HEADER.map((h,i)=>`<option value="${i}" ${COLS[k]===i?"selected":""}>${esc(h||("列"+(i+1)))}</option>`).join("");
+    return `<div class="fld"><label>${label}</label><select data-k="${k}">${opts}</select></div>`;
+  }).join("");
+  document.querySelectorAll("#colmap select").forEach(s => s.onchange = () => COLS[s.dataset.k] = +s.value);
+  renderSlots(); renderDayChk();
+}
+function renderSlots(){
+  const mk = (arr, host) => document.getElementById(host).innerHTML = arr.map((s,i)=>
+      `<div class="slot"><input type="text" value="${esc(s.name)}" data-h="${host}" data-i="${i}" data-f="name">
+       <input type="text" class="tm" value="${esc(s.a)}" data-h="${host}" data-i="${i}" data-f="a">-
+       <input type="text" class="tm" value="${esc(s.b)}" data-h="${host}" data-i="${i}" data-f="b"></div>`).join("");
+  mk(SLOTS,"dslots"); mk(ESLOTS,"eslots");
+  document.querySelectorAll("#dslots input,#eslots input").forEach(inp => inp.onchange = () => {
+    (inp.dataset.h==="dslots"?SLOTS:ESLOTS)[+inp.dataset.i][inp.dataset.f] = inp.value.trim();
+    syncTarget();
+  });
+}
+function renderDayChk(){
+  document.getElementById("chkdays").innerHTML = DAYS.map(d =>
+    `<label><input type="checkbox" value="${d}" ${CHKDAYS.includes(d)?"checked":""}>${d}</label>`).join("");
+  document.getElementById("showdays").innerHTML = DAYS.map(d =>
+    `<label><input type="checkbox" value="${d}" ${SHOWDAYS.includes(d)?"checked":""}>${d}</label>`).join("");
+  document.querySelectorAll("#chkdays input").forEach(c => c.onchange = () => {
+    CHKDAYS = [...document.querySelectorAll("#chkdays input:checked")].map(x=>x.value); syncTarget();
+  });
+  document.querySelectorAll("#showdays input").forEach(c => c.onchange = () =>
+    SHOWDAYS = [...document.querySelectorAll("#showdays input:checked")].map(x=>x.value));
+  syncTarget();
+}
+function syncTarget(){ document.getElementById("target").value = Math.max(1, CHKDAYS.length * SLOTS.length); }
+document.getElementById("run").onclick = runStat;
+
+/* ===================== 核心统计 ===================== */
+function runStat(){
+  const err = document.getElementById("err"); err.innerHTML = "";
+  if(COLS.region<0 || COLS.time<0 || COLS.room<0){ err.innerHTML = `<div class="err">请先正确指定「区域 / 上课时间 / 教室」三列</div>`; return; }
+  if(!SHOWDAYS.length){ err.innerHTML = `<div class="err">请至少选择一个展示星期</div>`; return; }
+  if(!CHKDAYS.length){ err.innerHTML = `<div class="err">请至少选择一个考核星期</div>`; return; }
+
+  const target = Math.max(1, +document.getElementById("target").value || CHKDAYS.length*SLOTS.length);
+  const ovmin = Math.max(1, +document.getElementById("ovmin").value || 30);
+  const DLIST = SLOTS.map((s,i)=>({k:"D"+i, ...s, eve:false}))
+         .filter(s => /^\d{1,2}:\d{2}$/.test(s.a) && /^\d{1,2}:\d{2}$/.test(s.b) && mm(s.b)>mm(s.a));
+  const ELIST = ESLOTS.map((s,i)=>({k:"E"+i, ...s, eve:true}))
+         .filter(s => /^\d{1,2}:\d{2}$/.test(s.a) && /^\d{1,2}:\d{2}$/.test(s.b) && mm(s.b)>mm(s.a));
+  const ALL = DLIST.concat(ELIST);
+  const RE = /((?:周[一二三四五六日天]、?)+)\s*(\d{1,2}:\d{2})\s*[-~—－]\s*(\d{1,2}:\d{2})/g;
+
+  const occ = new Map(), allRooms = new Set(), nonstd = [];
+  const getV = (r,k) => { const i = COLS[k]; return i<0 ? "" : String(r[HEADER[i]] ?? "").trim(); };
+
+  for(const r of ROWS){
+    const region = getV(r,"region").replace(/【|】|报名入口/g,"").trim() || "未分组";
+    const rooms = getV(r,"room").split(/[\r\n]+|[；;]/).map(s=>s.trim()).filter(Boolean);
+    const tparts = String(getV(r,"time")).split(/[\r\n]+/).map(s=>s.trim()).filter(Boolean);
+    const parsed = [];
+    for(const tp of tparts){
+      RE.lastIndex = 0; let m;
+      while((m = RE.exec(tp))){
+        const days = (m[1].match(/周[一二三四五六日天]/g)||[]).map(d => d==="周天"?"周日":d);
+        parsed.push({days, s:mm(m[2]), e:mm(m[3]), raw:tp});
+      }
+    }
+    const pairs = (rooms.length>1 && rooms.length===parsed.length)
+      ? rooms.map((rm,i)=>[rm,parsed[i]]) : rooms.flatMap(rm => parsed.map(p=>[rm,p]));
+    for(const [room, p] of pairs){
+      allRooms.add(region+"\u0001"+room);
+      const wd = p.days.filter(d => SHOWDAYS.includes(d));
+      if(!wd.length) continue;
+      const hits = ALL.filter(sl => Math.max(0, Math.min(p.e, mm(sl.b)) - Math.max(p.s, mm(sl.a))) >= ovmin);
+      if(!hits.length){
+        if(p.days.some(d=>SHOWDAYS.includes(d)))
+          nonstd.push({区域:region, 教室:room, 班级名称:getV(r,"name"), 专业:getV(r,"major"),
+                       教师:getV(r,"teacher"), 上课时间:p.raw});
+        continue;
+      }
+      const info = {班级名称:getV(r,"name"), 专业:getV(r,"major"), 教师:getV(r,"teacher"),
+                    状态:getV(r,"status"), 已招学员:getV(r,"recruited"), 原始时间:p.raw};
+      for(const d of wd) for(const sl of hits){
+        const key = K(region, room, d, sl.k);
+        if(!occ.has(key)) occ.set(key, []);
+        occ.get(key).push(info);
+      }
+    }
+  }
+
+  const regions = [...new Set([...allRooms].map(x=>x.split("\u0001")[0]))].sort();
+  const roomsByRegion = {};
+  regions.forEach(rg => roomsByRegion[rg] = [...allRooms].filter(x=>x.startsWith(rg+"\u0001"))
+                          .map(x=>x.split("\u0001")[1]).sort());
+
+  const matrix = [], empty = [];
+  for(const rg of regions) for(const room of roomsByRegion[rg]){
+    const cells = {}; let cnt = 0;
+    for(const d of DAYS) for(const sl of ALL) cells[d+"|"+sl.k] = occ.get(K(rg,room,d,sl.k)) || [];
+    for(const d of CHKDAYS) for(const sl of DLIST) if(cells[d+"|"+sl.k].length) cnt++;
+    const row = {区域:rg, 教室:room, cells, 已排:cnt, 空闲:Math.max(0,target-cnt), 达标:cnt>=target};
+    matrix.push(row);
+    for(const d of CHKDAYS) for(const sl of DLIST)
+      if(!cells[d+"|"+sl.k].length)
+        empty.push({区域:rg, 教室:room, 星期:d, 节次:sl.name, 时间段:sl.a+"-"+sl.b, 已排:cnt, 空闲:row.空闲});
+  }
+  empty.sort((a,b)=> (b.空闲-a.空闲) || a.区域.localeCompare(b.区域) || a.教室.localeCompare(b.教室)
+              || a.星期.localeCompare(b.星期) || a.节次.localeCompare(b.节次));
+
+  RESULT = {matrix, empty, nonstd, occ, regions, roomsByRegion, DLIST, ELIST, ALL, target, ovmin};
+  render();
+  document.getElementById("result").className = "";
+  document.getElementById("result").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* ===================== 渲染 ===================== */
+const PALETTE = ["#2f6fed","#e0762a","#7c3aed","#0d9488","#d946ef","#ca8a04","#dc2626"];
+const colorOf = rg => PALETTE[RESULT.regions.indexOf(rg) % PALETTE.length];
+const get = (rg,rm,d,k) => RESULT.occ.get(K(rg,rm,d,k)) || [];
+
+/* 各类计数 */
+function countIn(rg, rm, days, slist){
+  let n = 0; for(const d of days) for(const sl of slist) if(get(rg,rm,d,sl.k).length) n++;
+  return n;
+}
+const WD = () => SHOWDAYS.filter(d => WORKDAYS.includes(d));
+
+function render(){
+  const {regions, matrix, empty} = RESULT;
+  if(!curRegion || !regions.includes(curRegion)) curRegion = regions[0];
+  let h = `<h2>统计概览</h2><div class="cards">`;
+  regions.forEach(rg => {
+    const sub = matrix.filter(r=>r.区域===rg);
+    const n = sub.length, full = sub.filter(r=>r.达标).length;
+    const wdays = WD(), wkN = n * wdays.length * RESULT.DLIST.length;
+    const wkUsed = sub.reduce((a,r)=>a+countIn(rg,r.教室,wdays,RESULT.DLIST),0);
+    const evN = n * SHOWDAYS.length * RESULT.ELIST.length;
+    const evUsed = sub.reduce((a,r)=>a+countIn(rg,r.教室,SHOWDAYS,RESULT.ELIST),0);
+    h += `<div class="ccard" style="border-left-color:${colorOf(rg)}">
+      <h4><span class="dot" style="background:${colorOf(rg)}"></span>${esc(rg)}</h4>
+      <div class="stats">
+        <div class="stat info"><div class="n">${n}</div><div class="l">教室数</div></div>
+        <div class="stat ok"><div class="n">${full}</div><div class="l">周末达标 ${RESULT.target}/${RESULT.target}</div></div>
+        <div class="stat warn"><div class="n">${n-full}</div><div class="l">有空档</div></div>
+        <div class="stat warn"><div class="n">${sub.reduce((a,r)=>a+r.空闲,0)}</div><div class="l">周末空档节次</div></div>
+        <div class="stat"><div class="n">${wkN?Math.round(wkUsed/wkN*100):0}%</div><div class="l">工作日排课率</div></div>
+        <div class="stat ev"><div class="n">${evN?Math.round(evUsed/evN*100):0}%</div><div class="l">晚课使用率</div></div>
+      </div></div>`;
+  });
+  h += `</div>`;
+
+  h += `<div class="legend">
+    <span><i class="sw" style="background:var(--grnbg)"></i>白天已排课</span>
+    <span><i class="sw" style="background:var(--redbg)"></i>空闲</span>
+    <span><i class="sw" style="background:var(--eve)"></i>晚课已排</span>
+    <span><i class="sw" style="background:#f7f8fa"></i>晚课空闲</span>
+    <span><i class="sw" style="background:var(--yel)"></i>同时段多班冲突</span></div>`;
+
+  h += `<div class="toolbar" style="margin-top:16px">
+    <button class="btn pri" onclick="exportXlsx()">导出 Excel（多表）</button>
+    <button class="btn" onclick="exportCsv()">导出当前筛选 CSV</button>
+    <button class="btn" onclick="exportHtml()">导出网页报告</button>
+    <span class="tag">周末空档 ${empty.length} 条</span></div>`;
+
+  h += `<h2>排课情况</h2>
+    <div class="tabs">${regions.map(rg=>`<span class="tab ${rg===curRegion?"on":""}" data-rg="${esc(rg)}" onclick="setRegion(this)">${esc(rg)}</span>`).join("")}</div>
+    <div class="tabs">
+      <span class="tab ${curView==="weekend"?"on":""}" data-v="weekend" onclick="setView(this)">周末达标检查</span>
+      <span class="tab ${curView==="full"?"on":""}" data-v="full" onclick="setView(this)">全周排课总览</span>
+      <span class="tab ${curView==="workday"?"on":""}" data-v="workday" onclick="setView(this)">工作日（周一~周五）</span>
+      <span class="tab ${curView==="evening"?"on ev":""}" data-v="evening" onclick="setView(this)">晚课（周一~周日）</span>
+    </div>
+    <div id="main"></div>`;
+
+  h += `<h2>空教室明细（考核范围：${CHKDAYS.join("、")} 白天节次，共 ${empty.length} 条）</h2>
+    <div class="toolbar">
+      <input id="qem" placeholder="教室 / 星期 / 节次 关键字…" oninput="renderEmpty()">
+      <select id="freg" onchange="renderEmpty()"><option value="">全部区域</option>
+        ${regions.map(rg=>`<option value="${esc(rg)}">${esc(rg)}</option>`).join("")}</select>
+      <select id="fday" onchange="renderEmpty()"><option value="">全部星期</option>
+        ${CHKDAYS.map(d=>`<option value="${d}">${d}</option>`).join("")}</select>
+      <button class="btn sm" onclick="exportCsv()">导出当前筛选 CSV</button>
+    </div>
+    <div class="tbox"><table><thead><tr>
+      <th style="cursor:pointer" onclick="sortBy('区域')">区域</th>
+      <th style="cursor:pointer" onclick="sortBy('教室')">教室</th>
+      <th style="cursor:pointer" onclick="sortBy('星期')">星期</th>
+      <th style="cursor:pointer" onclick="sortBy('节次')">节次</th>
+      <th>时间段</th>
+      <th style="cursor:pointer" onclick="sortBy('已排')">该教室已排</th>
+      <th style="cursor:pointer" onclick="sortBy('空闲')">该教室空闲</th>
+    </tr></thead><tbody id="etbody"></tbody></table></div>`;
+
+  const top = {}; empty.forEach(e => top[e.区域+"\u0001"+e.教室] = e.空闲);
+  const tops = Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  if(tops.length) h += `<div class="note"><b>周末空档最多的教室 TOP ${tops.length}：</b>` +
+      tops.map(([k,n])=>{const [rg,rm]=k.split("\u0001"); return `${esc(rg)} · <b>${esc(rm)}</b>（空 ${n} 节）`;}).join("　｜　") + `</div>`;
+
+  if(RESULT.nonstd.length) h += `<h2>未匹配标准节次的课程（需人工确认）</h2>
+      <div class="tbox"><table><thead><tr><th>区域</th><th>教室</th><th>班级名称</th><th>专业</th><th>教师</th><th>上课时间</th></tr></thead><tbody>` +
+      RESULT.nonstd.map(n=>`<tr><td>${esc(n.区域)}</td><td>${esc(n.教室)}</td><td>${esc(n.班级名称)}</td><td>${esc(n.专业)}</td><td>${esc(n.教师)}</td><td><b>${esc(n.上课时间)}</b></td></tr>`).join("") +
+      `</tbody></table></div>`;
+
+  document.getElementById("result").innerHTML = h;
+  renderMain(); renderEmpty();
+}
+function setRegion(el){ curRegion = el.dataset.rg; render(); }
+function setView(el){ curView = el.dataset.v; render(); }
+function toggleEve(el){ inclEve = el.checked; renderMain(); }
+
+function renderMain(){
+  const rg = curRegion;
+  const rooms = RESULT.roomsByRegion[rg] || [];
+  const box = document.getElementById("main");
+  if(!box) return;
+  let h = "";
+  if(curView === "weekend")      h = viewWeekend(rg, rooms);
+  else if(curView === "full")    h = viewFull(rg, rooms);
+  else if(curView === "workday") h = viewRange(rg, rooms, WD(), inclEve ? RESULT.ALL : RESULT.DLIST,
+                                              inclEve ? "工作日（周一~周五）全部节次（含晚课）" : "工作日（周一~周五）白天节次", false, true);
+  else                           h = viewRange(rg, rooms, SHOWDAYS, RESULT.ELIST, "晚课排课情况（周一~周日）", true);
+  box.innerHTML = h;
+  filterRoom();
+}
+
+/* 视图1：周末达标矩阵 */
+function viewWeekend(rg, rooms){
+  const D = RESULT.DLIST, E = RESULT.ELIST;
+  const rows = rooms.map(rm => {
+    const row = RESULT.matrix.find(x=>x.区域===rg && x.教室===rm);
+    return {rm, row, ev: countIn(rg, rm, SHOWDAYS, E)};
+  }).sort((a,b)=> b.row.空闲-a.row.空闲 || a.rm.localeCompare(b.rm));
+  let h = `<div class="toolbar">
+      <input id="qroom" placeholder="输入教室名筛选…" oninput="filterRoom()">
+      <label class="tag"><input type="checkbox" id="onlygap" onchange="filterRoom()"> 只看有空档</label>
+      <span class="tag">共 ${rooms.length} 间教室 ｜ 考核：${CHKDAYS.join("、")} 白天 ${D.length} 节，达标 ${RESULT.target} 节</span></div>`;
+  h += `<div class="tbox"><table id="mt"><thead><tr><th>教室</th><th>已排</th><th>空闲</th><th>状态</th>` +
+    CHKDAYS.flatMap(d => D.map(sl=>`<th>${d}<br><span style="font-weight:400;font-size:11px">${esc(sl.name)}<br>${esc(sl.a)}-${esc(sl.b)}</span></th>`)).join("");
+  if(E.length) h += `<th style="background:#eaf0fb">晚课<br><span style="font-weight:400;font-size:11px">${SHOWDAYS.length}天共${SHOWDAYS.length*E.length}节</span></th>`;
+  h += `</tr></thead><tbody>`;
+  for(const {rm, row, ev} of rows){
+    h += `<tr data-room="${esc(rm)}" data-gap="${row.空闲>0?1:0}"><th>${esc(rm)}</th>
+      <td class="c" style="font-weight:600">${row.已排}</td>
+      <td class="c" style="font-weight:600;color:${row.空闲?"var(--red)":"var(--grn)"}">${row.空闲}</td>
+      <td class="c"><span class="badge ${row.达标?"b-full":"b-gap"}">${row.达标?"达标":"有空档"}</span></td>`;
+    for(const d of CHKDAYS) for(const sl of D) h += cellHtml(row.cells[d+"|"+sl.k]);
+    if(E.length) h += `<td class="c" style="color:#1e429f;font-weight:600">${ev} / ${SHOWDAYS.length*E.length}</td>`;
+    h += `</tr>`;
+  }
+  return h + `</tbody></table></div>`;
+}
+
+/* 视图2：全周总览（紧凑） */
+function viewFull(rg, rooms){
+  const ALL = RESULT.ALL, days = SHOWDAYS;
+  let h = `<div class="toolbar">
+      <input id="qroom" placeholder="输入教室名筛选…" oninput="filterRoom()">
+      <label class="tag"><input type="checkbox" id="onlygap" onchange="filterRoom()"> 只看有空档</label>
+      <span class="tag">周一~周日 × ${ALL.length} 节次 ｜ 悬停查看班级详情</span></div>`;
+  h += `<div class="tbox"><table id="mt"><thead>
+    <tr class="grp"><th rowspan="2" style="z-index:4">教室</th><th rowspan="2" style="z-index:4">已排</th>` +
+    days.map(d=>`<th colspan="${ALL.length}">${d}</th>`).join("") + `</tr>
+    <tr class="sub">` + days.flatMap(()=>ALL.map(sl=>
+      `<th style="${sl.eve?"background:#e4ebf7":""}">${esc(short(sl.name))}<br><span style="font-weight:400;font-size:10px">${esc(sl.a)}</span></th>`)).join("") + `</tr>
+    </thead><tbody>`;
+  const rows = rooms.map(rm => {
+    const row = RESULT.matrix.find(x=>x.区域===rg && x.教室===rm);
+    return {rm, row, n: countIn(rg, rm, days, ALL)};
+  }).sort((a,b)=> a.n-b.n || a.rm.localeCompare(b.rm));
+  const total = days.length * ALL.length;
+  for(const {rm, row, n} of rows){
+    h += `<tr data-room="${esc(rm)}" data-gap="${row.空闲>0?1:0}"><th>${esc(rm)}</th>
+      <td class="c" style="font-weight:600">${n}<span style="color:var(--mut);font-weight:400">/${total}</span></td>`;
+    for(const d of days) for(const sl of ALL){
+      const l = get(rg, rm, d, sl.k);
+      h += l.length
+        ? `<td class="cmp ${sl.eve?"even used":"used"}${l.length>1?" conflict":""}" title="${esc(d+" "+sl.name+" "+sl.a+"-"+sl.b)}\n${esc(l.map(x=>x.班级名称+"（"+x.教师+"）").join("\n"))}">●</td>`
+        : `<td class="cmp ${sl.eve?"even":"empty"}" title="${esc(d+" "+sl.name+" "+sl.a+"-"+sl.b)}｜空闲">${sl.eve?"·":"空"}</td>`;
+    }
+    h += `</tr>`;
+  }
+  h += `</tbody></table></div>`;
+
+  /* 时段空闲汇总 */
+  h += `<h2 style="font-size:15px">各时段空闲教室汇总（${esc(rg)}）</h2>
+    <div class="tbox" style="max-height:420px"><table><thead><tr>
+      <th>星期</th><th>节次</th><th>时间段</th><th>空闲教室数</th><th>占用教室数</th><th>空闲率</th><th>空闲教室</th></tr></thead><tbody>`;
+  for(const d of days) for(const sl of ALL){
+    const free = rooms.filter(rm => !get(rg,rm,d,sl.k).length);
+    const pct = rooms.length ? Math.round(free.length/rooms.length*100) : 0;
+    h += `<tr><td>${esc(d)}</td><td>${esc(sl.name)}${sl.eve?' <span class="tag">晚课</span>':""}</td>
+      <td>${esc(sl.a)}-${esc(sl.b)}</td>
+      <td class="c" style="font-weight:600;color:var(--red)">${free.length}</td>
+      <td class="c">${rooms.length-free.length}</td>
+      <td class="c">${pct}%</td>
+      <td style="font-size:11.5px;color:var(--mut)">${esc(free.slice(0,12).join("、"))}${free.length>12?` 等 ${free.length} 间`:""}</td></tr>`;
+  }
+  return h + `</tbody></table></div>`;
+}
+
+/* 视图3/4：指定星期×节次范围矩阵 */
+function viewRange(rg, rooms, days, slist, title, isEve, canEve){
+  if(!days.length) return `<div class="note">当前「展示星期」未包含该范围的任何一天，请勾选后重新统计。</div>`;
+  const total = days.length * slist.length;
+  const rows = rooms.map(rm => ({rm, n: countIn(rg, rm, days, slist),
+      row: RESULT.matrix.find(x=>x.区域===rg && x.教室===rm)}))
+      .sort((a,b)=> a.n-b.n || a.rm.localeCompare(b.rm));
+  const usedAll = rows.reduce((a,r)=>a+r.n,0);
+  let h = `<div class="toolbar">
+      <input id="qroom" placeholder="输入教室名筛选…" oninput="filterRoom()">
+      <label class="tag"><input type="checkbox" id="onlygap" onchange="filterRoom()"> 只看有空闲</label>
+      ${canEve ? `<label class="tag"><input type="checkbox" id="inclEve" onchange="toggleEve(this)" ${inclEve?"checked":""}> 含晚课</label>` : ""}
+      <span class="tag">${esc(title)} ｜ ${days.join("、")} 共 ${total} 节 ｜ 整体排课率 ${total*rooms.length?Math.round(usedAll/(total*rooms.length)*100):0}%</span></div>`;
+  h += `<div class="tbox"><table id="mt"><thead><tr><th>教室</th><th>已排</th><th>空闲</th><th>排课率</th>` +
+    days.flatMap(d => slist.map(sl=>`<th>${d}<br><span style="font-weight:400;font-size:11px">${esc(short(sl.name))}<br>${esc(sl.a)}-${esc(sl.b)}</span></th>`)).join("") +
+    `</tr></thead><tbody>`;
+  for(const {rm, n, row} of rows){
+    const free = total - n;
+    h += `<tr data-room="${esc(rm)}" data-gap="${row.空闲>0?1:0}"><th>${esc(rm)}</th>
+      <td class="c" style="font-weight:600">${n}</td>
+      <td class="c" style="font-weight:600;color:var(--red)">${free}</td>
+      <td class="c">${Math.round(n/total*100)}%</td>`;
+    for(const d of days) for(const sl of slist){
+      const l = get(rg, rm, d, sl.k);
+      h += l.length
+        ? `<td class="${isEve?"even used":"used"}${l.length>1?" conflict":""}" title="${esc(l.map(x=>x.班级名称+"（"+x.教师+" "+x.原始时间+"）").join("\n"))}">${esc(l[0].班级名称.slice(0,10))}${l.length>1?` +${l.length-1}`:""}</td>`
+        : `<td class="empty">空</td>`;
+    }
+    h += `</tr>`;
+  }
+  return h + `</tbody></table></div>`;
+}
+
+function cellHtml(lst){
+  if(!lst || !lst.length) return `<td class="empty">空</td>`;
+  const body = lst.map(x=>`<span class="cn" title="${esc(x.班级名称)}｜${esc(x.专业)}｜教师：${esc(x.教师)}｜已招 ${esc(x.已招学员)}">${esc(x.班级名称)}</span><span class="tn">${esc(x.教师)} · ${esc(x.原始时间)}</span>`).join("");
+  return `<td class="used${lst.length>1?" conflict":""}">${body}</td>`;
+}
+function filterRoom(){
+  const q = (document.getElementById("qroom")?.value||"").trim();
+  const only = document.getElementById("onlygap")?.checked;
+  document.querySelectorAll("#mt tbody tr").forEach(tr => {
+    tr.style.display = ((!q || tr.dataset.room.includes(q)) && (!only || tr.dataset.gap==="1")) ? "" : "none";
+  });
+}
+function sortBy(k){ if(sortKey===k) sortAsc=!sortAsc; else {sortKey=k; sortAsc=true;} renderEmpty(); }
+function renderEmpty(){
+  if(!RESULT) return;
+  let list = RESULT.empty.slice();
+  const q = (document.getElementById("qem")?.value||"").trim();
+  const rg = document.getElementById("freg")?.value || "";
+  const dy = document.getElementById("fday")?.value || "";
+  if(q) list = list.filter(e => (e.教室+e.星期+e.节次+e.时间段).includes(q));
+  if(rg) list = list.filter(e => e.区域 === rg);
+  if(dy) list = list.filter(e => e.星期 === dy);
+  if(sortKey) list.sort((a,b)=>{ const x=a[sortKey], y=b[sortKey];
+    const c = (typeof x==="number") ? x-y : String(x).localeCompare(String(y)); return sortAsc?c:-c; });
+  const tb = document.getElementById("etbody"); if(!tb) return;
+  tb.innerHTML = list.length ? list.map(e=>`<tr>
+    <td>${esc(e.区域)}</td><td><b>${esc(e.教室)}</b></td><td>${esc(e.星期)}</td><td>${esc(e.节次)}</td>
+    <td><b>${esc(e.时间段)}</b></td><td>${e.已排} / ${RESULT.target}</td>
+    <td style="color:var(--red);font-weight:600">${e.空闲}</td></tr>`).join("")
+    : `<tr><td colspan="7" style="text-align:center;color:var(--mut);padding:18px">没有符合条件的记录</td></tr>`;
+  window._curEmpty = list;
+}
+
+/* ===================== 导出 ===================== */
+function stamp(){ const d=new Date(), p=n=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`; }
+const sane = s => String(s).replace(/[\\\/\?\*\[\]:]/g,"_").slice(0,31);
+
+function exportXlsx(){
+  if(!RESULT) return;
+  const {matrix, empty, nonstd, regions, roomsByRegion, DLIST, ELIST, ALL, target} = RESULT;
+  const wb = XLSX.utils.book_new();
+
+  const ws1 = XLSX.utils.aoa_to_sheet([["区域","教室","星期","节次","时间段",`该教室已排(满${target})`,"该教室空闲"],
+    ...empty.map(e=>[e.区域,e.教室,e.星期,e.节次,e.时间段,e.已排,e.空闲])]);
+  ws1["!cols"] = [12,24,8,12,14,16,12].map(w=>({wch:w}));
+  ws1["!autofilter"] = {ref: XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:empty.length, c:6}})};
+  XLSX.utils.book_append_sheet(wb, ws1, "空教室明细");
+
+  regions.forEach(rg => {
+    const cols = ["教室",`周末已排(满${target})`,"周末空闲","周末是否达标"]
+      .concat(ALL.flatMap(sl => SHOWDAYS.map(d => `${d}${sl.eve?"[晚]":""} ${sl.name} ${sl.a}-${sl.b}`)));
+    const rows = roomsByRegion[rg].map(rm => {
+      const row = matrix.find(x=>x.区域===rg && x.教室===rm);
+      return [rm, row.已排, row.空闲, row.达标?"达标":"有空档"].concat(
+        ALL.flatMap(sl => SHOWDAYS.map(d => {
+          const l = get(rg, rm, d, sl.k);
+          return l.length ? l.map(x=>`${x.班级名称}（${x.教师} ${x.原始时间}）`).join(" / ") : "";
+        })));
+    }).sort((a,b)=> b[2]-a[2]);
+    const ws = XLSX.utils.aoa_to_sheet([cols, ...rows]);
+    ws["!cols"] = [24,14,10,12].concat(ALL.flatMap(()=>SHOWDAYS.map(()=>({wch:24}))));
+    ws["!autofilter"] = {ref: XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:rows.length, c:cols.length-1}})};
+    XLSX.utils.book_append_sheet(wb, ws, sane("全周总览-"+rg));
+  });
+
+  const wd = WD();
+  if(wd.length){
+    const cols = ["区域","教室","已排","空闲","排课率"].concat(
+      DLIST.flatMap(sl => wd.map(d => `${d} ${sl.name} ${sl.a}-${sl.b}`)));
+    const rows = [];
+    regions.forEach(rg => roomsByRegion[rg].forEach(rm => {
+      const n = countIn(rg, rm, wd, DLIST), t = wd.length*DLIST.length;
+      rows.push([rg, rm, n, t-n, Math.round(n/t*100)+"%"].concat(
+        DLIST.flatMap(sl => wd.map(d => {
+          const l = get(rg, rm, d, sl.k);
+          return l.length ? l.map(x=>`${x.班级名称}（${x.教师}）`).join(" / ") : "";
+        }))));
+    }));
+    const ws = XLSX.utils.aoa_to_sheet([cols, ...rows]);
+    ws["!cols"] = [12,22,8,8,9].concat(DLIST.flatMap(()=>wd.map(()=>({wch:22}))));
+    ws["!autofilter"] = {ref: XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:rows.length, c:cols.length-1}})};
+    XLSX.utils.book_append_sheet(wb, ws, "工作日统计");
+  }
+
+  if(ELIST.length){
+    const cols = ["区域","教室","已排晚课","空闲","晚课使用率"].concat(
+      ELIST.flatMap(sl => SHOWDAYS.map(d => `${d} ${sl.name} ${sl.a}-${sl.b}`)));
+    const rows = [];
+    regions.forEach(rg => roomsByRegion[rg].forEach(rm => {
+      const n = countIn(rg, rm, SHOWDAYS, ELIST), t = SHOWDAYS.length*ELIST.length;
+      rows.push([rg, rm, n, t-n, Math.round(n/t*100)+"%"].concat(
+        ELIST.flatMap(sl => SHOWDAYS.map(d => {
+          const l = get(rg, rm, d, sl.k);
+          return l.length ? l.map(x=>`${x.班级名称}（${x.教师}）`).join(" / ") : "";
+        }))));
+    }));
+    rows.sort((a,b)=> b[2]-a[2]);
+    const ws = XLSX.utils.aoa_to_sheet([cols, ...rows]);
+    ws["!cols"] = [12,22,11,8,12].concat(ELIST.flatMap(()=>SHOWDAYS.map(()=>({wch:22}))));
+    ws["!autofilter"] = {ref: XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:rows.length, c:cols.length-1}})};
+    XLSX.utils.book_append_sheet(wb, ws, "晚课统计");
+  }
+
+  if(nonstd.length){
+    const ws = XLSX.utils.aoa_to_sheet([["区域","教室","班级名称","专业","教师","上课时间"],
+      ...nonstd.map(n=>[n.区域,n.教室,n.班级名称,n.专业,n.教师,n.上课时间])]);
+    ws["!cols"] = [12,22,40,14,12,22].map(w=>({wch:w}));
+    XLSX.utils.book_append_sheet(wb, ws, sane("非标准时段"));
+  }
+  XLSX.writeFile(wb, `空教室统计_${stamp()}.xlsx`);
+}
+function exportCsv(){
+  if(!RESULT) return;
+  const list = window._curEmpty && window._curEmpty.length ? window._curEmpty : RESULT.empty;
+  const ws = XLSX.utils.aoa_to_sheet([["区域","教室","星期","节次","时间段",`该教室已排(满${RESULT.target})`,"该教室空闲"],
+    ...list.map(e=>[e.区域,e.教室,e.星期,e.节次,e.时间段,e.已排,e.空闲])]);
+  dl(new Blob(["\ufeff"+XLSX.utils.sheet_to_csv(ws)], {type:"text/csv;charset=utf-8"}), `空教室明细_${stamp()}.csv`);
+}
+function exportHtml(){
+  if(!RESULT) return;
+  const css = document.querySelector("style").innerHTML;
+  const body = document.getElementById("result").innerHTML.replace(/<button[^>]*onclick="export[^"]*"[^>]*>[^<]*<\/button>/g,"");
+  dl(new Blob([`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>空教室统计报告</title><style>${css}</style></head>
+<body><div class="wrap"><h1>空教室统计报告</h1><div class="sub">导出时间：${new Date().toLocaleString("zh-CN")} ｜ 周末达标要求：每个教室 ${RESULT.target} 节</div>
+${body}<div class="foot">由「空教室统计工具」生成</div></div></body></html>`], {type:"text/html;charset=utf-8"}),
+     `空教室统计报告_${stamp()}.html`);
+}
+function dl(blob, name){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();}, 400);
+}
+</script>
+</body>
+</html>

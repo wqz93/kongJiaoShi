@@ -1,0 +1,972 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>周六日教室空档统计报告</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f6f8;color:#1f2328;font-family:"Microsoft YaHei","PingFang SC",-apple-system,Segoe UI,sans-serif;font-size:14px;line-height:1.6}
+.wrap{max-width:1680px;margin:0 auto;padding:28px 22px 60px}
+h1{font-size:24px;margin:0 0 6px;font-weight:700}
+.sub{color:#6b7280;font-size:13px;margin-bottom:20px}
+.rule{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 18px;margin-bottom:22px;color:#374151;font-size:13px}
+.rule b{color:#111827}
+.cards{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.card{flex:1;min-width:330px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px 20px;border-left:5px solid #ccc}
+.card h3{margin:0 0 12px;font-size:16px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:#f8fafc;border:1px solid #eef1f5;border-radius:8px;padding:8px 12px;min-width:88px}
+.stat .n{font-size:20px;font-weight:700;line-height:1.2}
+.stat .l{font-size:12px;color:#6b7280}
+.stat.warn .n{color:#d92d20}.stat.ok .n{color:#12805c}.stat.info .n{color:#2f6fed}
+h2{font-size:18px;margin:30px 0 12px;padding-left:10px;border-left:4px solid #2f6fed}
+.toolbar{display:flex;gap:10px;align-items:center;margin:10px 0 12px;flex-wrap:wrap}
+.toolbar input{padding:7px 12px;border:1px solid #d1d5db;border-radius:8px;width:220px;font-size:13px;outline:none}
+.toolbar input:focus{border-color:#2f6fed}
+.tag{font-size:12px;color:#6b7280;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:4px 12px}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:12.5px}
+.tbox{border:1px solid #e5e7eb;border-radius:10px;overflow:auto;margin-bottom:10px}
+th,td{border:1px solid #e8eaed;padding:6px 8px;vertical-align:middle}
+thead th{background:#eef2f7;color:#1f2937;font-weight:600;position:sticky;top:0;z-index:2;white-space:nowrap}
+tbody th{background:#f8fafc;text-align:left;font-weight:600;white-space:nowrap;position:sticky;left:0;z-index:1}
+td.empty{background:#fee4e2;color:#b42318;font-weight:600;text-align:center}
+td.used{background:#eafaf1;color:#0a5c3e}
+td.used.conflict{background:#fef0c7;color:#93370d}
+td.even{background:#f2f4f7;color:#475467}
+td.even.used{background:#eef4ff;color:#1e429f;background:#eef4ff}
+td.used .cn{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+td.used .tn{display:block;font-size:11px;opacity:.75}
+.badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11.5px;font-weight:600}
+.b-full{background:#e7f6ef;color:#12805c}.b-gap{background:#fee4e2;color:#b42318}
+tr.gaprow td,tr.gaprow th{background:#fff}
+.foot{margin-top:34px;color:#9aa1ab;font-size:12px;text-align:center}
+.note{background:#fffaeb;border:1px solid #fedf89;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:13px;color:#7a4b00}
+.legend span{display:inline-block;margin-right:16px;font-size:12px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px;border:1px solid #d0d5dd}
+</style></head><body><div class="wrap">
+
+<h1>周六 / 周日 教室空档统计报告</h1>
+<div class="sub">数据源：招生简章.xls ｜ 共 51 条班级记录 ｜ 按「区域」分校区独立统计</div>
+<div class="rule">
+<b>统计口径：</b>每天标准节次 4 节（<b>上午 2 节</b> 08:30-10:00 / 10:10-11:40，<b>下午 2 节</b> 14:00-15:30 / 15:40-17:10）；
+晚间 2 节（17:20-18:50 / 19:00-20:30）为弹性时段，<b>不纳入考核</b>，仅作参考。<br>
+<b>判定规则：</b>周六 + 周日，每个教室「上午 + 下午」应排满 <b>8 节</b>（4 节 × 2 天）。不足 8 节即判定为存在<b>空教室</b>，逐条列出空闲时间段。<br>
+<b>时段归位：</b>课程时段与标准节次重叠 ≥ 30 分钟即视为占用该节次；跨节次的连堂课（如 08:30-11:30）同时占用所覆盖的多个节次。
+</div>
+<div class="cards">
+<div class="card" style="border-left-color:#2f6fed">
+<h3><span class="dot" style="background:#2f6fed"></span>厦港校区</h3>
+<div class="stats">
+<div class="stat info"><div class="n">30</div><div class="l">教室总数</div></div>
+<div class="stat ok"><div class="n">13</div><div class="l">已满课(8/8)</div></div>
+<div class="stat warn"><div class="n">17</div><div class="l">有空档教室</div></div>
+<div class="stat warn"><div class="n">43</div><div class="l">空档节次</div></div>
+<div class="stat"><div class="n">82%</div><div class="l">周末排课率</div></div>
+</div></div>
+<div class="card" style="border-left-color:#e0762a">
+<h3><span class="dot" style="background:#e0762a"></span>镇海校区</h3>
+<div class="stats">
+<div class="stat info"><div class="n">21</div><div class="l">教室总数</div></div>
+<div class="stat ok"><div class="n">7</div><div class="l">已满课(8/8)</div></div>
+<div class="stat warn"><div class="n">14</div><div class="l">有空档教室</div></div>
+<div class="stat warn"><div class="n">36</div><div class="l">空档节次</div></div>
+<div class="stat"><div class="n">79%</div><div class="l">周末排课率</div></div>
+</div></div>
+</div>
+<div class="legend" style="margin-bottom:6px">
+<span><i class="sw" style="background:#eafaf1"></i>已排课</span>
+<span><i class="sw" style="background:#fee4e2"></i>空教室（重点）</span>
+<span><i class="sw" style="background:#fef0c7"></i>同一时段多班冲突</span>
+<span><i class="sw" style="background:#eef4ff"></i>晚间已排课（不计考核）</span>
+<span><i class="sw" style="background:#f2f4f7"></i>晚间空闲（不计考核）</span>
+</div>
+<h2 style="border-left-color:#2f6fed">厦港校区 ｜ 周末教室排课一览（30 间教室）</h2>
+<div class="toolbar"><input class="q" data-t="厦港校区" placeholder="输入教室名筛选…" oninput="flt(this)"><span class="tag">红色「空」= 该时段教室闲置</span></div>
+<div class="tbox"><table class="mt" id="t-厦港校区"><thead><tr>
+<th>教室</th><th>已排<br>节数</th><th>空闲<br>节数</th><th>状态</th>
+<th>周六<br><span style="font-weight:400;font-size:11px">上午第1节<br>08:30-10:00</span></th>
+<th>周六<br><span style="font-weight:400;font-size:11px">上午第2节<br>10:10-11:40</span></th>
+<th>周六<br><span style="font-weight:400;font-size:11px">下午第1节<br>14:00-15:30</span></th>
+<th>周六<br><span style="font-weight:400;font-size:11px">下午第2节<br>15:40-17:10</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">上午第1节<br>08:30-10:00</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">上午第2节<br>10:10-11:40</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">下午第1节<br>14:00-15:30</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">下午第2节<br>15:40-17:10</span></th>
+<th style="background:#f2f4f7">晚间<br>已排</th>
+</tr></thead><tbody>
+<tr class="gaprow">
+<th>思明小学小操场</th>
+<td style="text-align:center;font-weight:600">1</td>
+<td style="text-align:center;font-weight:600;color:#b42318">7</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）体适能冲分营 A思小｜体能训练、跳绳｜教师：郑嘉华｜已招 23 人">（厦港）体适能冲分营 A思小</span><span class="tn">郑嘉华 · 周六 08:20-09:50</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室307-2</th>
+<td style="text-align:center;font-weight:600">2</td>
+<td style="text-align:center;font-weight:600;color:#b42318">6</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）钢琴一对一 E9｜钢琴｜教师：庄静怡｜已招 1 人">（厦港）钢琴一对一 E9</span><span class="tn">庄静怡 · 周日 10:30-11:20</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）钢琴一对一 G12｜钢琴｜教师：邓蕾｜已招 1 人">（厦港）钢琴一对一 G12</span><span class="tn">邓蕾 · 周日 16:00-16:50</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室411</th>
+<td style="text-align:center;font-weight:600">3</td>
+<td style="text-align:center;font-weight:600;color:#b42318">5</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）吉他提高班 四班 F411｜吉他｜教师：王小安｜已招 10 人">（厦港）吉他提高班 四班 F411</span><span class="tn">王小安 · 周日 10:10-11:40</span></td>
+<td class="used conflict"><span class="cn" title="（厦港）吉他基础一班 G411-1｜吉他｜教师：王昱麟｜已招 10 人">（厦港）吉他基础一班 G411-1</span><span class="tn">王昱麟 · 周日 14:00-15:30</span><span class="cn" title="（厦港）吉他进阶班 G411-2｜吉他｜教师：王小安｜已招 9 人">（厦港）吉他进阶班 G411-2</span><span class="tn">王小安 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）长笛高阶班H411｜长笛｜教师：王婧怡｜已招 12 人">（厦港）长笛高阶班H411</span><span class="tn">王婧怡 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港4楼大舞蹈排练厅</th>
+<td style="text-align:center;font-weight:600">4</td>
+<td style="text-align:center;font-weight:600;color:#b42318">4</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团二团（杨老师）EF414｜少儿舞蹈艺术团预备团｜教师：杨洋洋｜已招 24 人">（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团二团（杨老师）EF414</span><span class="tn">杨洋洋 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团二团（杨老师）EF414｜少儿舞蹈艺术团预备团｜教师：杨洋洋｜已招 24 人">（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团二团（杨老师）EF414</span><span class="tn">杨洋洋 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（定安小学舞蹈团）GH414｜少儿舞蹈艺术团预备团｜教师：李舒颖｜已招 23 人">（厦港）小飞鹭艺术团舞蹈分团（定安小学舞蹈团）GH414</span><span class="tn">李舒颖 · 周日 14:00-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（定安小学舞蹈团）GH414｜少儿舞蹈艺术团预备团｜教师：李舒颖｜已招 23 人">（厦港）小飞鹭艺术团舞蹈分团（定安小学舞蹈团）GH414</span><span class="tn">李舒颖 · 周日 14:00-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港少年宫小飞鹭剧场右侧</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿轮滑  基础A｜轮滑（在厦港少年宫三楼）｜教师：聂铭贵｜已招 11 人">（厦港）少儿轮滑  基础A</span><span class="tn">聂铭贵 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿轮滑  基础B｜轮滑（在厦港少年宫三楼）｜教师：聂铭贵｜已招 11 人">（厦港）少儿轮滑  基础B</span><span class="tn">聂铭贵 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）武魂少年|武术传承特训营 （低年级）基础班 C｜中国武术｜教师：刘恒宇｜已招 9 人">（厦港）武魂少年|武术传承特训营 （低年级）基础班 C</span><span class="tn">刘恒宇 · 周六 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）少儿轮滑 低年级 提高E｜轮滑（在厦港少年宫三楼）｜教师：官国勋｜已招 8 人">（厦港）少儿轮滑 低年级 提高E</span><span class="tn">官国勋 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿轮滑  基础F｜轮滑（在厦港少年宫三楼）｜教师：官国勋｜已招 11 人">（厦港）少儿轮滑  基础F</span><span class="tn">官国勋 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿轮滑 低年级 提高G｜轮滑（在厦港少年宫三楼）｜教师：官国勋｜已招 10 人">（厦港）少儿轮滑 低年级 提高G</span><span class="tn">官国勋 · 周日 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室307</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）体适能 （1-3年级）B307｜体能训练、跳绳｜教师：郑嘉华｜已招 21 人">（厦港）体适能 （1-3年级）B307</span><span class="tn">郑嘉华 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团民族管弦乐团预备团CD307｜民族管弦乐团预备团｜教师：吴睿泓｜已招 7 人">（厦港）小飞鹭艺术团民族管弦乐团预备团CD307</span><span class="tn">吴睿泓 · 周六 14:00-17:00</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团民族管弦乐团预备团CD307｜民族管弦乐团预备团｜教师：吴睿泓｜已招 7 人">（厦港）小飞鹭艺术团民族管弦乐团预备团CD307</span><span class="tn">吴睿泓 · 周六 14:00-17:00</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿小主持人提高（中大班） E307｜小主持人｜教师：许小咪｜已招 18 人">（厦港）幼儿小主持人提高（中大班） E307</span><span class="tn">许小咪 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿小主持人基础 （小中班） F307｜小主持人｜教师：许小咪｜已招 20 人">（厦港）幼儿小主持人基础 （小中班） F307</span><span class="tn">许小咪 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）Hello趣学（小升初）G307｜Hello趣学｜教师：陈钰萍｜已招 9 人">（厦港）Hello趣学（小升初）G307</span><span class="tn">陈钰萍 · 周日 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室308</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）吉他中级二班 A308｜吉他｜教师：王小安｜已招 9 人">（厦港）吉他中级二班 A308</span><span class="tn">王小安 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）吉他基础三班 B308｜吉他｜教师：王小安｜已招 15 人">（厦港）吉他基础三班 B308</span><span class="tn">王小安 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）吉他提高班  C308｜吉他｜教师：王昱麟｜已招 10 人">（厦港）吉他提高班  C308</span><span class="tn">王昱麟 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）Hello趣学（4-5年级）D308｜Hello趣学｜教师：吕招治｜已招 19 人">（厦港）Hello趣学（4-5年级）D308</span><span class="tn">吕招治 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿文学（5年级）E308｜少儿文学｜教师：李志梅｜已招 8 人">（厦港）少儿文学（5年级）E308</span><span class="tn">李志梅 · 周日 08:30-10:00</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）少儿文学（3年级）G308｜少儿文学｜教师：何楚金｜已招 8 人">（厦港）少儿文学（3年级）G308</span><span class="tn">何楚金 · 周日 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室310</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）塑形瑜伽（美肩薄背+臀腿塑形）A310｜青年瑜伽｜教师：任思颖｜已招 11 人">（厦港）塑形瑜伽（美肩薄背+臀腿塑形）A310</span><span class="tn">任思颖 · 周六 08:30-09:50</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）拉丁舞成品舞（提高）C310｜拉丁舞｜教师：叶婷婷｜已招 7 人">（厦港）拉丁舞成品舞（提高）C310</span><span class="tn">叶婷婷 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）拉丁舞成品舞（初级）D310｜拉丁舞｜教师：叶婷婷｜已招 13 人">（厦港）拉丁舞成品舞（初级）D310</span><span class="tn">叶婷婷 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭语言表演艺术团预备团二团EF310｜语言表演艺术团预备团｜教师：洪美春｜已招 19 人">（厦港）小飞鹭语言表演艺术团预备团二团EF310</span><span class="tn">洪美春 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭语言表演艺术团预备团二团EF310｜语言表演艺术团预备团｜教师：洪美春｜已招 19 人">（厦港）小飞鹭语言表演艺术团预备团二团EF310</span><span class="tn">洪美春 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）青年燃脂排毒瑜伽（臀腿塑形） G310 周日14:00-15:20｜青年瑜伽｜教师：林欣仪｜已招 12 人">（厦港）青年燃脂排毒瑜伽（臀腿塑形） G310 周日14:00-15:20</span><span class="tn">林欣仪 · 周日 14:00-15:20</span></td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室311</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）scratch编程2级上册 A311｜少儿编程｜教师：吉晓芳｜已招 13 人">（厦港）scratch编程2级上册 A311</span><span class="tn">吉晓芳 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）机器人搭建拓展 B311｜科创启蒙（搭建类）｜教师：吉晓芳｜已招 9 人">（厦港）机器人搭建拓展 B311</span><span class="tn">吉晓芳 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）小小发明家 （1-3年级）C311｜智能科创（具身智能基础）｜教师：朱丽娜｜已招 11 人">（厦港）小小发明家 （1-3年级）C311</span><span class="tn">朱丽娜 · 周六 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="(厦港)小小工程师（百变工程）F311｜科创启蒙（搭建类）｜教师：王碧瑶｜已招 14 人">(厦港)小小工程师（百变工程）F311</span><span class="tn">王碧瑶 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）scratch编程高阶3级下册 G311｜少儿编程｜教师：王碧瑶｜已招 8 人">（厦港）scratch编程高阶3级下册 G311</span><span class="tn">王碧瑶 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）scratch编程高阶3级下册 H311｜少儿编程｜教师：王碧瑶｜已招 10 人">（厦港）scratch编程高阶3级下册 H311</span><span class="tn">王碧瑶 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室406</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）少年结构线性速写进阶 B406｜线性速写（8-55岁）｜教师：黄静婧｜已招 11 人">（厦港）少年结构线性速写进阶 B406</span><span class="tn">黄静婧 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少年素描进阶班（几何组合）C406｜素描（9-55岁）｜教师：黄静婧｜已招 15 人">（厦港）少年素描进阶班（几何组合）C406</span><span class="tn">黄静婧 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少年结构线性速写精英班 D406｜线性速写（8-55岁）｜教师：黄静婧｜已招 7 人">（厦港）少年结构线性速写精英班 D406</span><span class="tn">黄静婧 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）少年结构线性速写提高 E406｜线性速写（8-55岁）｜教师：郭小丫｜已招 4 人">（厦港）少年结构线性速写提高 E406</span><span class="tn">郭小丫 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少年素描提高（几何多面体）F406｜素描（9-55岁）｜教师：郭小丫｜已招 7 人">（厦港）少年素描提高（几何多面体）F406</span><span class="tn">郭小丫 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少年素描高阶（几何与静物）G406｜素描（9-55岁）｜教师：郭小丫｜已招 15 人">（厦港）少年素描高阶（几何与静物）G406</span><span class="tn">郭小丫 · 周日 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室407</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）古筝进阶班B407｜古筝｜教师：李净涵｜已招 11 人">（厦港）古筝进阶班B407</span><span class="tn">李净涵 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）电子琴基础班C407｜电子琴｜教师：高蕾｜已招 10 人">（厦港）电子琴基础班C407</span><span class="tn">高蕾 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）电子琴提高班D407｜电子琴｜教师：高蕾｜已招 12 人">（厦港）电子琴提高班D407</span><span class="tn">高蕾 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）古筝提高班 F407｜古筝｜教师：伊惠琼｜已招 6 人">（厦港）古筝提高班 F407</span><span class="tn">伊惠琼 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）电子琴弹唱(小班课）G407｜电子琴｜教师：李敏｜已招 4 人">（厦港）电子琴弹唱(小班课）G407</span><span class="tn">李敏 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）电子琴弹唱(小班课）H407｜电子琴｜教师：李敏｜已招 7 人">（厦港）电子琴弹唱(小班课）H407</span><span class="tn">李敏 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室409</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团一团（来老师）CD409｜少儿舞蹈艺术团预备团｜教师：来俊伯｜已招 23 人">（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团一团（来老师）CD409</span><span class="tn">来俊伯 · 周六 14:00-17:00</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团一团（来老师）CD409｜少儿舞蹈艺术团预备团｜教师：来俊伯｜已招 23 人">（厦港）小飞鹭艺术团舞蹈分团（少儿舞蹈）预备团一团（来老师）CD409</span><span class="tn">来俊伯 · 周六 14:00-17:00</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（街舞）预备团 （林老师）EF409｜少儿舞蹈艺术团预备团｜教师：林洁｜已招 17 人">（厦港）小飞鹭艺术团舞蹈分团（街舞）预备团 （林老师）EF409</span><span class="tn">林洁 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团舞蹈分团（街舞）预备团 （林老师）EF409｜少儿舞蹈艺术团预备团｜教师：林洁｜已招 17 人">（厦港）小飞鹭艺术团舞蹈分团（街舞）预备团 （林老师）EF409</span><span class="tn">林洁 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）女团爵士舞训练班（2年级-初三）G409｜街舞｜教师：林洁｜已招 8 人">（厦港）女团爵士舞训练班（2年级-初三）G409</span><span class="tn">林洁 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）街舞训练班（1-8年级）H409｜街舞｜教师：林洁｜已招 23 人">（厦港）街舞训练班（1-8年级）H409</span><span class="tn">林洁 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">3 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室303</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿声乐基础班 （1-3年级）A303｜少儿声乐｜教师：徐婧蕙｜已招 12 人">（厦港）少儿声乐基础班 （1-3年级）A303</span><span class="tn">徐婧蕙 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿声乐提高班  (3-7年级） B303｜少儿声乐｜教师：徐婧蕙｜已招 13 人">（厦港）少儿声乐提高班  (3-7年级） B303</span><span class="tn">徐婧蕙 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）Hello趣学（1年级）C303｜Hello趣学｜教师：邢艳丽｜已招 14 人">（厦港）Hello趣学（1年级）C303</span><span class="tn">邢艳丽 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）读写与表达（1年级看图讲故事）D303｜文学素养｜教师：许添红｜已招 12 人">（厦港）读写与表达（1年级看图讲故事）D303</span><span class="tn">许添红 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）Hello趣学（2-3年级）F303｜Hello趣学｜教师：陈菲菲｜已招 8 人">（厦港）Hello趣学（2-3年级）F303</span><span class="tn">陈菲菲 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团弦乐团预备团  GH303｜弦乐团预备团｜教师：朱婧娴｜已招 16 人">（厦港）小飞鹭艺术团弦乐团预备团  GH303</span><span class="tn">朱婧娴 · 周日 14:00-17:00</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团弦乐团预备团  GH303｜弦乐团预备团｜教师：朱婧娴｜已招 16 人">（厦港）小飞鹭艺术团弦乐团预备团  GH303</span><span class="tn">朱婧娴 · 周日 14:00-17:00</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室401</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）python编程初阶4级下册   B401｜少儿编程｜教师：陈雅菁｜已招 17 人">（厦港）python编程初阶4级下册   B401</span><span class="tn">陈雅菁 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）机器人搭建一二级 C401｜科创启蒙（搭建类）｜教师：吉晓芳｜已招 17 人">（厦港）机器人搭建一二级 C401</span><span class="tn">吉晓芳 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）python编程初阶4级上册D401｜少儿编程｜教师：陈莉｜已招 3 人">（厦港）python编程初阶4级上册D401</span><span class="tn">陈莉 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿文学（中大班）  E401｜少儿文学｜教师：林亚彬｜已招 8 人">（厦港）少儿文学（中大班）  E401</span><span class="tn">林亚彬 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）python编程中阶6级上册 F401｜少儿编程｜教师：郑卓然｜已招 7 人">（厦港）python编程中阶6级上册 F401</span><span class="tn">郑卓然 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）Procreate（iPad画画）G401｜数字绘画（8-55岁）｜教师：吴志颖｜已招 7 人">（厦港）Procreate（iPad画画）G401</span><span class="tn">吴志颖 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）python编程初阶4级下册 H401｜少儿编程｜教师：郑卓然｜已招 11 人">（厦港）python编程初阶4级下册 H401</span><span class="tn">郑卓然 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室403</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）卷面书写 （3年级）A403｜硬笔书法｜教师：林毅佳｜已招 17 人">（厦港）卷面书写 （3年级）A403</span><span class="tn">林毅佳 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）硬笔书法（ 2年级） B403｜硬笔书法｜教师：林毅佳｜已招 15 人">（厦港）硬笔书法（ 2年级） B403</span><span class="tn">林毅佳 · 周六 10:10-11:40</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）硬笔书法（1年级）D403｜硬笔书法｜教师：林毅佳｜已招 23 人">（厦港）硬笔书法（1年级）D403</span><span class="tn">林毅佳 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿练字 （大班）E403｜幼儿练字｜教师：陈淑红｜已招 11 人">（厦港）幼儿练字 （大班）E403</span><span class="tn">陈淑红 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）数形智力开发（中班）F403｜数形智力开发｜教师：刘芊妤｜已招 15 人">（厦港）数形智力开发（中班）F403</span><span class="tn">刘芊妤 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）国学 《论语》七期  G403｜国学｜教师：黄桂华｜已招 16 人">（厦港）国学 《论语》七期  G403</span><span class="tn">黄桂华 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）硬笔书法 （2年级） H403｜硬笔书法｜教师：陈澧萍｜已招 16 人">（厦港）硬笔书法 （2年级） H403</span><span class="tn">陈澧萍 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>厦港教室404</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="（厦港）读写与表达（2年级） A404｜文学素养｜教师：许添红｜已招 19 人">（厦港）读写与表达（2年级） A404</span><span class="tn">许添红 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）读写与表达（2年级）B404｜文学素养｜教师：许添红｜已招 12 人">（厦港）读写与表达（2年级）B404</span><span class="tn">许添红 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）魔方竞技提高班  C404｜魔方竞技｜教师：连伟强｜已招 13 人">（厦港）魔方竞技提高班  C404</span><span class="tn">连伟强 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）益智思维 （大班）D404｜益智思维｜教师：黄品馨｜已招 8 人">（厦港）益智思维 （大班）D404</span><span class="tn">黄品馨 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="（厦港）创意绘画班  （低龄班） F404｜少儿画（7-8岁）｜教师：曾丽丽｜已招 18 人">（厦港）创意绘画班  （低龄班） F404</span><span class="tn">曾丽丽 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）益智图析 3年级G404｜益智图析｜教师：蔡育婷｜已招 9 人">（厦港）益智图析 3年级G404</span><span class="tn">蔡育婷 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）益智图析 2年级H404｜益智图析｜教师：蔡育婷｜已招 8 人">（厦港）益智图析 2年级H404</span><span class="tn">蔡育婷 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>思明小学教学楼一楼架空层</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="匹克球（低年级） A｜匹克球（在思明小学一楼架空层）｜教师：徐博文｜已招 6 人">匹克球（低年级） A</span><span class="tn">徐博文 · 周六 08:20-09:50</span></td>
+<td class="used"><span class="cn" title="儿童匹克球 B｜匹克球（在思明小学一楼架空层）｜教师：徐博文｜已招 20 人">儿童匹克球 B</span><span class="tn">徐博文 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="匹克球（高年级） C｜匹克球（在思明小学一楼架空层）｜教师：徐博文｜已招 10 人">匹克球（高年级） C</span><span class="tn">徐博文 · 周六 13:50-15:20</span></td>
+<td class="used conflict"><span class="cn" title="（厦港）体适能冲分营    D思小｜体能训练、跳绳｜教师：郑嘉华｜已招 21 人">（厦港）体适能冲分营    D思小</span><span class="tn">郑嘉华 · 周六 15:40-17:10</span><span class="cn" title="匹克球（青年）D周六15:40｜匹克球（在思明小学一楼架空层）｜教师：徐博文｜已招 5 人">匹克球（青年）D周六15:40</span><span class="tn">徐博文 · 周六 15:40-17:00</span></td>
+<td class="empty">空</td>
+<td class="used conflict"><span class="cn" title="儿童匹克球 F｜匹克球（在思明小学一楼架空层）｜教师：徐博文｜已招 11 人">儿童匹克球 F</span><span class="tn">徐博文 · 周日 10:10-11:40</span><span class="cn" title="小篮球 F｜小篮球（在思明小学教学楼一楼架空层）｜教师：蔡哲凯｜已招 23 人">小篮球 F</span><span class="tn">蔡哲凯 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="匹克球（高年级）  G｜匹克球（在思明小学一楼架空层）｜教师：徐博文｜已招 8 人">匹克球（高年级）  G</span><span class="tn">徐博文 · 周日 13:50-15:20</span></td>
+<td class="used conflict"><span class="cn" title="匹克球（青年）H 周日15:40｜匹克球（在思明小学一楼架空层）｜教师：徐博文｜已招 10 人">匹克球（青年）H 周日15:40</span><span class="tn">徐博文 · 周日 15:40-17:00</span><span class="cn" title="小篮球（高年级）H｜小篮球（在思明小学教学楼一楼架空层）｜教师：蔡哲凯｜已招 13 人">小篮球（高年级）H</span><span class="tn">蔡哲凯 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="">
+<th>厦港4楼小舞蹈排练厅</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童艺术影视A班AB415｜儿童剧｜教师：阎存斌｜已招 22 人">（厦港）儿童艺术影视A班AB415</span><span class="tn">阎存斌 · 周六 08:30-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童艺术影视A班AB415｜儿童剧｜教师：阎存斌｜已招 22 人">（厦港）儿童艺术影视A班AB415</span><span class="tn">阎存斌 · 周六 08:30-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭语言表演艺术团预备团一团 CD415｜语言表演艺术团预备团｜教师：王梅洁｜已招 20 人">（厦港）小飞鹭语言表演艺术团预备团一团 CD415</span><span class="tn">王梅洁 · 周六 14:30-17:30</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭语言表演艺术团预备团一团 CD415｜语言表演艺术团预备团｜教师：王梅洁｜已招 20 人">（厦港）小飞鹭语言表演艺术团预备团一团 CD415</span><span class="tn">王梅洁 · 周六 14:30-17:30</span></td>
+<td class="used"><span class="cn" title="（厦港)少儿舞蹈高阶（2-3年级）E415｜中国舞｜教师：陈巧虹｜已招 12 人">（厦港)少儿舞蹈高阶（2-3年级）E415</span><span class="tn">陈巧虹 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿舞蹈提高（大班-1年级）F415｜中国舞｜教师：李舒颖｜已招 21 人">（厦港）少儿舞蹈提高（大班-1年级）F415</span><span class="tn">李舒颖 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿舞蹈提高（大班-1年级）G415｜中国舞｜教师：邹宇婷｜已招 15 人">（厦港）少儿舞蹈提高（大班-1年级）G415</span><span class="tn">邹宇婷 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿舞蹈基础（幼龄班） H415｜中国舞｜教师：李舒颖｜已招 16 人">（厦港）幼儿舞蹈基础（幼龄班） H415</span><span class="tn">李舒颖 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="">
+<th>厦港少年宫小飞鹭剧场左侧</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 高年级 A｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 24 人">（厦港）少儿乒乓球 高年级 A</span><span class="tn">魏志毅 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 高年级 B｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 31 人">（厦港）少儿乒乓球 高年级 B</span><span class="tn">魏志毅 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 低年级 C｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 16 人">（厦港）少儿乒乓球 低年级 C</span><span class="tn">魏志毅 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 低年级 D｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 15 人">（厦港）少儿乒乓球 低年级 D</span><span class="tn">魏志毅 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 低年级E｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 11 人">（厦港）少儿乒乓球 低年级E</span><span class="tn">魏志毅 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 低年级F｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 24 人">（厦港）少儿乒乓球 低年级F</span><span class="tn">魏志毅 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 高年级G｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 22 人">（厦港）少儿乒乓球 高年级G</span><span class="tn">魏志毅 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿乒乓球 高年级H｜乒乓球（在厦港少年宫三楼）｜教师：魏志毅｜已招 21 人">（厦港）少儿乒乓球 高年级H</span><span class="tn">魏志毅 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室301</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）体适能、跳绳（低年级） A301｜体能训练、跳绳｜教师：蔡哲凯｜已招 12 人">（厦港）体适能、跳绳（低年级） A301</span><span class="tn">蔡哲凯 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）体适能、跳绳（中大班） B301｜体能训练、跳绳｜教师：蔡哲凯｜已招 19 人">（厦港）体适能、跳绳（中大班） B301</span><span class="tn">蔡哲凯 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿体适能（感统专注训练）小班 C301｜体能训练、跳绳｜教师：蔡哲凯｜已招 7 人">（厦港）幼儿体适能（感统专注训练）小班 C301</span><span class="tn">蔡哲凯 · 周六 14:30-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）武魂少年|武术传承特训营 （低年级）提高班D301｜中国武术｜教师：刘恒宇｜已招 11 人">（厦港）武魂少年|武术传承特训营 （低年级）提高班D301</span><span class="tn">刘恒宇 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）体适能、跳绳（中大班）E301｜体能训练、跳绳｜教师：蔡哲凯｜已招 10 人">（厦港）体适能、跳绳（中大班）E301</span><span class="tn">蔡哲凯 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）跆拳道（高年级）F301｜跆拳道｜教师：陈港｜已招 15 人">（厦港）跆拳道（高年级）F301</span><span class="tn">陈港 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）跆拳道（低年级）G301｜跆拳道｜教师：陈港｜已招 13 人">（厦港）跆拳道（低年级）G301</span><span class="tn">陈港 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）武魂少年|武术传承特训营 （高年级）提高班H301｜中国武术｜教师：刘恒宇｜已招 8 人">（厦港）武魂少年|武术传承特训营 （高年级）提高班H301</span><span class="tn">刘恒宇 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室302</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿文学 （4年级）A302｜少儿文学｜教师：李志梅｜已招 5 人">（厦港）少儿文学 （4年级）A302</span><span class="tn">李志梅 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）声乐训练班 （幼儿） B302｜幼儿声乐｜教师：林婷婷｜已招 21 人">（厦港）声乐训练班 （幼儿） B302</span><span class="tn">林婷婷 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）Hello趣学（低龄班） C302｜Hello趣学｜教师：吕招治｜已招 19 人">（厦港）Hello趣学（低龄班） C302</span><span class="tn">吕招治 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）声乐训练班（幼儿） D302｜幼儿声乐｜教师：林婷婷｜已招 12 人">（厦港）声乐训练班（幼儿） D302</span><span class="tn">林婷婷 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）Hello趣学（中大班）E302｜Hello趣学｜教师：陈菲菲｜已招 14 人">（厦港）Hello趣学（中大班）E302</span><span class="tn">陈菲菲 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）美丽形象塑造F302｜美妆搭配｜教师：李逸潾｜已招 10 人">（厦港）美丽形象塑造F302</span><span class="tn">李逸潾 · 周日 10:10-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿声乐中级（1-3年级）G302｜少儿声乐｜教师：林婷婷｜已招 12 人">（厦港）少儿声乐中级（1-3年级）G302</span><span class="tn">林婷婷 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港) 声乐训练班 （幼龄班） H302｜幼儿声乐｜教师：林婷婷｜已招 10 人">（厦港) 声乐训练班 （幼龄班） H302</span><span class="tn">林婷婷 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室306</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿小主持人提高 （1-2年级） A306｜小主持人｜教师：龚晓芸｜已招 19 人">（厦港）少儿小主持人提高 （1-2年级） A306</span><span class="tn">龚晓芸 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿小主持人进阶 （2-4年级）  B306｜小主持人｜教师：龚晓芸｜已招 14 人">（厦港）少儿小主持人进阶 （2-4年级）  B306</span><span class="tn">龚晓芸 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童艺术影视B班 CD306｜儿童剧｜教师：苏炜泓｜已招 22 人">（厦港）儿童艺术影视B班 CD306</span><span class="tn">苏炜泓 · 周六 14:30-17:30</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童艺术影视B班 CD306｜儿童剧｜教师：苏炜泓｜已招 22 人">（厦港）儿童艺术影视B班 CD306</span><span class="tn">苏炜泓 · 周六 14:30-17:30</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团小胖合唱团预备团EF306｜小胖合唱团预备团｜教师：孙秀泽｜已招 29 人">（厦港）小飞鹭艺术团小胖合唱团预备团EF306</span><span class="tn">孙秀泽 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）小飞鹭艺术团小胖合唱团预备团EF306｜小胖合唱团预备团｜教师：孙秀泽｜已招 29 人">（厦港）小飞鹭艺术团小胖合唱团预备团EF306</span><span class="tn">孙秀泽 · 周日 08:30-11:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿声乐进阶班 （3-7年级） G306｜少儿声乐｜教师：徐婧蕙｜已招 11 人">（厦港）少儿声乐进阶班 （3-7年级） G306</span><span class="tn">徐婧蕙 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿声乐提高班 （2-6年级） H306｜少儿声乐｜教师：徐婧蕙｜已招 11 人">（厦港）少儿声乐提高班 （2-6年级） H306</span><span class="tn">徐婧蕙 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室309</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿文学（5-6年级）A309｜少儿文学｜教师：黄茜｜已招 11 人">（厦港）少儿文学（5-6年级）A309</span><span class="tn">黄茜 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿文学（3年级）B309｜少儿文学｜教师：李志梅｜已招 9 人">（厦港）少儿文学（3年级）B309</span><span class="tn">李志梅 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）卷面书写 （高年级） C309｜硬笔书法｜教师：刘伟鉴｜已招 22 人">（厦港）卷面书写 （高年级） C309</span><span class="tn">刘伟鉴 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）数形智力开发（大班）D309｜数形智力开发｜教师：王鹊廷｜已招 7 人">（厦港）数形智力开发（大班）D309</span><span class="tn">王鹊廷 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）高效学习思维导图（高年级）E309｜思维导图｜教师：蔡育婷｜已招 11 人">（厦港）高效学习思维导图（高年级）E309</span><span class="tn">蔡育婷 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）高效学习思维导图（2-3年级）F309｜思维导图｜教师：蔡育婷｜已招 11 人">（厦港）高效学习思维导图（2-3年级）F309</span><span class="tn">蔡育婷 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）数趣思维（5年级）G309｜数趣思维｜教师：林坤武｜已招 8 人">（厦港）数趣思维（5年级）G309</span><span class="tn">林坤武 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）数趣思维（6年级）H309｜数趣思维｜教师：林坤武｜已招 13 人">（厦港）数趣思维（6年级）H309</span><span class="tn">林坤武 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室312</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿围棋班（进阶）A312｜围棋｜教师：姚适奇｜已招 15 人">（厦港）少儿围棋班（进阶）A312</span><span class="tn">姚适奇 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿围棋（基础） B312｜围棋｜教师：吴庆卫｜已招 12 人">（厦港）少儿围棋（基础） B312</span><span class="tn">吴庆卫 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿围棋班（高阶）C312｜围棋｜教师：姚适奇｜已招 8 人">（厦港）少儿围棋班（高阶）C312</span><span class="tn">姚适奇 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿围棋班（提高）D312｜围棋｜教师：吴庆卫｜已招 18 人">（厦港）少儿围棋班（提高）D312</span><span class="tn">吴庆卫 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿国际象棋提高班  E312｜国际象棋｜教师：胡小祥｜已招 12 人">（厦港）少儿国际象棋提高班  E312</span><span class="tn">胡小祥 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿国际象棋（初级）  F312｜国际象棋｜教师：胡小祥｜已招 9 人">（厦港）少儿国际象棋（初级）  F312</span><span class="tn">胡小祥 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿国际象棋高级班 G312｜国际象棋｜教师：胡小祥｜已招 9 人">（厦港）少儿国际象棋高级班 G312</span><span class="tn">胡小祥 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿国际象棋高级班 H312｜国际象棋｜教师：胡小祥｜已招 20 人">（厦港）少儿国际象棋高级班 H312</span><span class="tn">胡小祥 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室313</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：船模遥控绕标竞速 （低年级）  A313｜模型遥控、自航（船模）｜教师：洪斌｜已招 8 人">（厦港）科技模型：船模遥控绕标竞速 （低年级）  A313</span><span class="tn">洪斌 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：船模遥控水上足球 （高年级）  B313｜模型遥控、自航（船模）｜教师：洪斌｜已招 4 人">（厦港）科技模型：船模遥控水上足球 （高年级）  B313</span><span class="tn">洪斌 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：船模自航直航竞速（低年级）   C313｜模型遥控、自航（船模）｜教师：洪斌｜已招 12 人">（厦港）科技模型：船模自航直航竞速（低年级）   C313</span><span class="tn">洪斌 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：船模遥控花样绕标（高年级）   D313｜模型遥控、自航（船模）｜教师：洪斌｜已招 5 人">（厦港）科技模型：船模遥控花样绕标（高年级）   D313</span><span class="tn">洪斌 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：车模竞速四驱车（低年级）   E313｜模型遥控、竞速（车模）｜教师：赵子豪｜已招 16 人">（厦港）科技模型：车模竞速四驱车（低年级）   E313</span><span class="tn">赵子豪 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：车模对抗2V2台球（高年级）   F313｜模型遥控、竞速（车模）｜教师：赵子豪｜已招 11 人">（厦港）科技模型：车模对抗2V2台球（高年级）   F313</span><span class="tn">赵子豪 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：空模竞速橡筋动力 （低年级）  G313｜模型遥控、放航（空模）｜教师：赵子豪｜已招 18 人">（厦港）科技模型：空模竞速橡筋动力 （低年级）  G313</span><span class="tn">赵子豪 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）科技模型：空模遥控直升机障碍 （高年级）  H313｜模型遥控、放航（空模）｜教师：赵子豪｜已招 10 人">（厦港）科技模型：空模遥控直升机障碍 （高年级）  H313</span><span class="tn">赵子豪 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室402</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）美术作品集训班（新春主题）   A402｜美术作品大师班（有绘画基础）｜教师：吴静怡｜已招 13 人">（厦港）美术作品集训班（新春主题）   A402</span><span class="tn">吴静怡 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童画大师作品班：秋天是魔法师  B402｜美术作品大师班（有绘画基础）｜教师：吴静怡｜已招 18 人">（厦港）儿童画大师作品班：秋天是魔法师  B402</span><span class="tn">吴静怡 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）粘土艺术工坊 C402｜彩泥美术｜教师：吴静怡｜已招 21 人">（厦港）粘土艺术工坊 C402</span><span class="tn">吴静怡 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童画大师作品班：秋日暖色狂想  D402｜美术作品大师班（有绘画基础）｜教师：吴静怡｜已招 19 人">（厦港）儿童画大师作品班：秋日暖色狂想  D402</span><span class="tn">吴静怡 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿漫画班（Q版漫画） E402｜卡通漫画（8-18岁）｜教师：吴静怡｜已招 20 人">（厦港）少儿漫画班（Q版漫画） E402</span><span class="tn">吴静怡 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿漫画班（创作营）F402｜卡通漫画（8-18岁）｜教师：吴静怡｜已招 24 人">（厦港）少儿漫画班（创作营）F402</span><span class="tn">吴静怡 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）创意绘画班（低龄班） G402｜幼儿画（4-6岁）｜教师：吴静怡｜已招 15 人">（厦港）创意绘画班（低龄班） G402</span><span class="tn">吴静怡 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童画大师作品班：一笔一秋  H402｜美术作品大师班（有绘画基础）｜教师：吴静怡｜已招 16 人">（厦港）儿童画大师作品班：一笔一秋  H402</span><span class="tn">吴静怡 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室405</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿创意绘画班 （幼龄班）A405｜幼儿画（4-6岁）｜教师：蔡佳音｜已招 21 人">（厦港）幼儿创意绘画班 （幼龄班）A405</span><span class="tn">蔡佳音 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿创意绘画班 (幼龄班）B405｜幼儿画（4-6岁）｜教师：蔡佳音｜已招 20 人">（厦港）幼儿创意绘画班 (幼龄班）B405</span><span class="tn">蔡佳音 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童画大师作品班：秋之色交响曲  C405｜美术作品大师班（有绘画基础）｜教师：林恒｜已招 10 人">（厦港）儿童画大师作品班：秋之色交响曲  C405</span><span class="tn">林恒 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童画大师作品班：云端秋收  D405｜美术作品大师班（有绘画基础）｜教师：林恒｜已招 16 人">（厦港）儿童画大师作品班：云端秋收  D405</span><span class="tn">林恒 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿创意绘画班 (幼龄班）E405｜幼儿画（4-6岁）｜教师：肖秋梅｜已招 12 人">（厦港）幼儿创意绘画班 (幼龄班）E405</span><span class="tn">肖秋梅 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿创意绘画班 （幼龄班）F405｜幼儿画（4-6岁）｜教师：肖秋梅｜已招 9 人">（厦港）幼儿创意绘画班 （幼龄班）F405</span><span class="tn">肖秋梅 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）彩泥艺术手作班（低龄班） G405｜彩泥美术｜教师：肖秋梅｜已招 10 人">（厦港）彩泥艺术手作班（低龄班） G405</span><span class="tn">肖秋梅 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿创意绘画班（幼龄班）H405｜幼儿画（4-6岁）｜教师：肖秋梅｜已招 15 人">（厦港）幼儿创意绘画班（幼龄班）H405</span><span class="tn">肖秋梅 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室410</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港)少儿舞蹈高阶（3-4年级）A410｜中国舞｜教师：苏琦｜已招 19 人">（厦港)少儿舞蹈高阶（3-4年级）A410</span><span class="tn">苏琦 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿舞蹈进阶（1-2年级）  B410｜中国舞｜教师：苏琦｜已招 24 人">（厦港）少儿舞蹈进阶（1-2年级）  B410</span><span class="tn">苏琦 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿舞蹈提高（幼龄班）C410｜中国舞｜教师：苏琦｜已招 7 人">（厦港）幼儿舞蹈提高（幼龄班）C410</span><span class="tn">苏琦 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿舞蹈提高（中大班）D410｜中国舞｜教师：苏琦｜已招 18 人">（厦港）幼儿舞蹈提高（中大班）D410</span><span class="tn">苏琦 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）青年芭蕾形体 E410｜青年芭蕾形体｜教师：张静｜已招 10 人">（厦港）青年芭蕾形体 E410</span><span class="tn">张静 · 周日 08:30-09:50</span></td>
+<td class="used"><span class="cn" title="（厦港）芭蕾舞基训班  F410｜芭蕾舞｜教师：张静｜已招 10 人">（厦港）芭蕾舞基训班  F410</span><span class="tn">张静 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿舞蹈进阶（1-3年级）G410｜中国舞｜教师：谢佳｜已招 14 人">（厦港）少儿舞蹈进阶（1-3年级）G410</span><span class="tn">谢佳 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿古典成品舞 （高年级）H410｜中国舞｜教师：谢佳｜已招 11 人">（厦港）少儿古典成品舞 （高年级）H410</span><span class="tn">谢佳 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室412</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）儿童画大师作品班：秋日魔法  A412｜美术作品大师班（有绘画基础）｜教师：林恒｜已招 19 人">（厦港）儿童画大师作品班：秋日魔法  A412</span><span class="tn">林恒 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿创意绘画班 B412｜少儿画（7-8岁）｜教师：林恒｜已招 23 人">（厦港）少儿创意绘画班 B412</span><span class="tn">林恒 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿书法高阶班（楷书与行楷）C412｜毛笔｜教师：陈阳奕｜已招 19 人">（厦港）少儿书法高阶班（楷书与行楷）C412</span><span class="tn">陈阳奕 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）幼儿练字 （大班）  D412｜幼儿练字｜教师：刘伟鉴｜已招 17 人">（厦港）幼儿练字 （大班）  D412</span><span class="tn">刘伟鉴 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）读写与表达 （3年级） E412｜文学素养｜教师：许添红｜已招 9 人">（厦港）读写与表达 （3年级） E412</span><span class="tn">许添红 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）国学 F412｜国学｜教师：何丽玲｜已招 6 人">（厦港）国学 F412</span><span class="tn">何丽玲 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿国画班（写意花鸟） G412｜国画（9-55岁）｜教师：陈阳奕｜已招 19 人">（厦港）少儿国画班（写意花鸟） G412</span><span class="tn">陈阳奕 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿书法基础班（篆书与隶书） H412｜毛笔｜教师：陈阳奕｜已招 17 人">（厦港）少儿书法基础班（篆书与隶书） H412</span><span class="tn">陈阳奕 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="">
+<th>厦港教室413</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="（厦港）数形智力开发（小班）A413｜数形智力开发｜教师：陈梦楠｜已招 9 人">（厦港）数形智力开发（小班）A413</span><span class="tn">陈梦楠 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）scratch编程高级3下册 B413｜少儿编程｜教师：陈莉｜已招 11 人">（厦港）scratch编程高级3下册 B413</span><span class="tn">陈莉 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）高效学习思维导图 高年级C413｜思维导图｜教师：孙春梅｜已招 17 人">（厦港）高效学习思维导图 高年级C413</span><span class="tn">孙春梅 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）高效学习思维导图 （2-3年级）D413｜思维导图｜教师：孙春梅｜已招 12 人">（厦港）高效学习思维导图 （2-3年级）D413</span><span class="tn">孙春梅 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="（厦港）少儿文学（1年级）E413｜少儿文学｜教师：何楚金｜已招 4 人">（厦港）少儿文学（1年级）E413</span><span class="tn">何楚金 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="（厦港）读写与表达 （1年级看图讲故事）F413｜文学素养｜教师：潘凤真｜已招 10 人">（厦港）读写与表达 （1年级看图讲故事）F413</span><span class="tn">潘凤真 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="（厦港）读写与表达（4年级）G413｜文学素养｜教师：潘凤真｜已招 19 人">（厦港）读写与表达（4年级）G413</span><span class="tn">潘凤真 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="（厦港）读写与表达 （3年级）H413｜文学素养｜教师：潘凤真｜已招 26 人">（厦港）读写与表达 （3年级）H413</span><span class="tn">潘凤真 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+</tbody></table></div>
+<h2 style="border-left-color:#e0762a">镇海校区 ｜ 周末教室排课一览（21 间教室）</h2>
+<div class="toolbar"><input class="q" data-t="镇海校区" placeholder="输入教室名筛选…" oninput="flt(this)"><span class="tag">红色「空」= 该时段教室闲置</span></div>
+<div class="tbox"><table class="mt" id="t-镇海校区"><thead><tr>
+<th>教室</th><th>已排<br>节数</th><th>空闲<br>节数</th><th>状态</th>
+<th>周六<br><span style="font-weight:400;font-size:11px">上午第1节<br>08:30-10:00</span></th>
+<th>周六<br><span style="font-weight:400;font-size:11px">上午第2节<br>10:10-11:40</span></th>
+<th>周六<br><span style="font-weight:400;font-size:11px">下午第1节<br>14:00-15:30</span></th>
+<th>周六<br><span style="font-weight:400;font-size:11px">下午第2节<br>15:40-17:10</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">上午第1节<br>08:30-10:00</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">上午第2节<br>10:10-11:40</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">下午第1节<br>14:00-15:30</span></th>
+<th>周日<br><span style="font-weight:400;font-size:11px">下午第2节<br>15:40-17:10</span></th>
+<th style="background:#f2f4f7">晚间<br>已排</th>
+</tr></thead><tbody>
+<tr class="gaprow">
+<th>厦禾社区二楼</th>
+<td style="text-align:center;font-weight:600">1</td>
+<td style="text-align:center;font-weight:600;color:#b42318">7</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】AI虚拟机器人基础班   厦禾社区二楼｜智能科创（具身智能基础）｜教师：待定｜已招 0 人">【镇海】AI虚拟机器人基础班   厦禾社区二楼</span><span class="tn">待定 · 周六 09:00-10:30</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室109</th>
+<td style="text-align:center;font-weight:600">2</td>
+<td style="text-align:center;font-weight:600;color:#b42318">6</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】Hello趣学（中大班）A109｜Hello趣学｜教师：邢艳丽｜已招 7 人">【镇海】Hello趣学（中大班）A109</span><span class="tn">邢艳丽 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿小主持人班（基础）B109｜小主持人｜教师：颜如钰｜已招 11 人">【镇海】少儿小主持人班（基础）B109</span><span class="tn">颜如钰 · 周六 10:10-11:40</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室402</th>
+<td style="text-align:center;font-weight:600">3</td>
+<td style="text-align:center;font-weight:600;color:#b42318">5</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】硬笔书法（三年级）A402｜硬笔书法｜教师：陈澧萍｜已招 9 人">【镇海】硬笔书法（三年级）A402</span><span class="tn">陈澧萍 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】硬笔书法 （二年级）B402｜硬笔书法｜教师：陈澧萍｜已招 16 人">【镇海】硬笔书法 （二年级）B402</span><span class="tn">陈澧萍 · 周六 10:10-11:40</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】幼儿练字D402｜幼儿练字｜教师：陈淑红｜已招 16 人">【镇海】幼儿练字D402</span><span class="tn">陈淑红 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室101</th>
+<td style="text-align:center;font-weight:600">5</td>
+<td style="text-align:center;font-weight:600;color:#b42318">3</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】四年级读写表达B101｜文学素养｜教师：潘凤真｜已招 17 人">【镇海】四年级读写表达B101</span><span class="tn">潘凤真 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】三年级读写表达C101｜文学素养｜教师：潘凤真｜已招 23 人">【镇海】三年级读写表达C101</span><span class="tn">潘凤真 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】二年级读写表达D101｜文学素养｜教师：潘凤真｜已招 23 人">【镇海】二年级读写表达D101</span><span class="tn">潘凤真 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】少儿文学（2年级）F101｜少儿文学｜教师：林坤武｜已招 10 人">【镇海】少儿文学（2年级）F101</span><span class="tn">林坤武 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿文学（5年级）G101｜少儿文学｜教师：李志梅｜已招 7 人">【镇海】少儿文学（5年级）G101</span><span class="tn">李志梅 · 周日 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室106</th>
+<td style="text-align:center;font-weight:600">5</td>
+<td style="text-align:center;font-weight:600;color:#b42318">3</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】尤克里里弹唱班B106｜尤克里里｜教师：张宇键｜已招 13 人">【镇海】尤克里里弹唱班B106</span><span class="tn">张宇键 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】吉他弹唱班C106｜吉他｜教师：张宇键｜已招 12 人">【镇海】吉他弹唱班C106</span><span class="tn">张宇键 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】尤克里里弹唱班D106｜吉他｜教师：张宇键｜已招 9 人">【镇海】尤克里里弹唱班D106</span><span class="tn">张宇键 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】幼儿小主持人班（基础）F106｜小主持人｜教师：陈怡婷｜已招 13 人">【镇海】幼儿小主持人班（基础）F106</span><span class="tn">陈怡婷 · 周日 10:10-11:40</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】尤克里里弹唱班H106｜吉他｜教师：张宇键｜已招 8 人">【镇海】尤克里里弹唱班H106</span><span class="tn">张宇键 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室107</th>
+<td style="text-align:center;font-weight:600">5</td>
+<td style="text-align:center;font-weight:600;color:#b42318">3</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】古筝提高班A107｜古筝｜教师：伊惠琼｜已招 8 人">【镇海】古筝提高班A107</span><span class="tn">伊惠琼 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】古筝基础班（新班）B107｜古筝｜教师：伊惠琼｜已招 4 人">【镇海】古筝基础班（新班）B107</span><span class="tn">伊惠琼 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】古筝进阶班C107｜古筝｜教师：伊惠琼｜已招 5 人">【镇海】古筝进阶班C107</span><span class="tn">伊惠琼 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】古筝提高班D107｜古筝｜教师：伊惠琼｜已招 8 人">【镇海】古筝提高班D107</span><span class="tn">伊惠琼 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】古筝 1对2 周日晚16:40-17:40｜古筝｜教师：高少杏｜已招 2 人">【镇海】古筝 1对2 周日晚16:40-17:40</span><span class="tn">高少杏 · 周日 16:40-17:40</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">3 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室401</th>
+<td style="text-align:center;font-weight:600">6</td>
+<td style="text-align:center;font-weight:600;color:#b42318">2</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】硬笔书法（一年级）A401｜硬笔书法｜教师：陈淑红｜已招 13 人">【镇海】硬笔书法（一年级）A401</span><span class="tn">陈淑红 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】Hello趣学（小中班）B401｜Hello趣学｜教师：邢艳丽｜已招 9 人">【镇海】Hello趣学（小中班）B401</span><span class="tn">邢艳丽 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】数趣思维（5年级）C401｜数趣思维｜教师：陈美盆｜已招 6 人">【镇海】数趣思维（5年级）C401</span><span class="tn">陈美盆 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】数趣思维（3年级）D401｜数趣思维｜教师：陈美盆｜已招 8 人">【镇海】数趣思维（3年级）D401</span><span class="tn">陈美盆 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】hello趣学（4-5年级）G401｜Hello趣学｜教师：吕招治｜已招 11 人">【镇海】hello趣学（4-5年级）G401</span><span class="tn">吕招治 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】hello趣学（5-6年级）H401｜Hello趣学｜教师：梁婕｜已招 5 人">【镇海】hello趣学（5-6年级）H401</span><span class="tn">梁婕 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海二楼礼堂02</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】小提琴 提高班A｜小提琴｜教师：张心远｜已招 7 人">【镇海】小提琴 提高班A</span><span class="tn">张心远 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】小提琴 进阶班（长期班）B｜小提琴｜教师：张心远｜已招 7 人">【镇海】小提琴 进阶班（长期班）B</span><span class="tn">张心远 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】小提琴 基础班C｜小提琴｜教师：张心远｜已招 9 人">【镇海】小提琴 基础班C</span><span class="tn">张心远 · 周六 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】声乐训练班 （少儿）E｜少儿声乐｜教师：颜雅菁｜已招 18 人">【镇海】声乐训练班 （少儿）E</span><span class="tn">颜雅菁 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】声乐训练班（幼儿） F｜幼儿声乐｜教师：颜雅菁｜已招 16 人">【镇海】声乐训练班（幼儿） F</span><span class="tn">颜雅菁 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿声乐班（提高） G｜少儿声乐｜教师：颜雅菁｜已招 7 人">【镇海】少儿声乐班（提高） G</span><span class="tn">颜雅菁 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】声乐训练班（幼儿） H｜幼儿声乐｜教师：颜雅菁｜已招 16 人">【镇海】声乐训练班（幼儿） H</span><span class="tn">颜雅菁 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">4 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室102</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】少年素描基础班（几何单体）A102｜素描（9-55岁）｜教师：陈娜如｜已招 11 人">【镇海】少年素描基础班（几何单体）A102</span><span class="tn">陈娜如 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】 少年素描进阶班（几何组合）B102｜素描（9-55岁）｜教师：陈娜如｜已招 11 人">【镇海】 少年素描进阶班（几何组合）B102</span><span class="tn">陈娜如 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】 少年素描进阶班（几何组合）C102｜素描（9-55岁）｜教师：陈娜如｜已招 10 人">【镇海】 少年素描进阶班（几何组合）C102</span><span class="tn">陈娜如 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】 少年素描提高班（几何多面体）D102｜素描（9-55岁）｜教师：陈娜如｜已招 11 人">【镇海】 少年素描提高班（几何多面体）D102</span><span class="tn">陈娜如 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】 少年素描基础班（几何单体、多面体）E102｜素描（9-55岁）｜教师：任泽远｜已招 12 人">【镇海】 少年素描基础班（几何单体、多面体）E102</span><span class="tn">任泽远 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】少年素描提高班（静物）F102｜素描（9-55岁）｜教师：任泽远｜已招 7 人">【镇海】少年素描提高班（静物）F102</span><span class="tn">任泽远 · 周日 10:10-11:40</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】 少年素描提高班（静物）H102｜素描（9-55岁）｜教师：任泽远｜已招 10 人">【镇海】 少年素描提高班（静物）H102</span><span class="tn">任泽远 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">3 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室103</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿创意绘画班A103｜幼儿画（4-6岁）｜教师：曾丽丽｜已招 18 人">【镇海】幼儿创意绘画班A103</span><span class="tn">曾丽丽 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿创意绘画班B103｜少儿画（7-8岁）｜教师：曾丽丽｜已招 21 人">【镇海】少儿创意绘画班B103</span><span class="tn">曾丽丽 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿创意绘画班C103｜幼儿画（4-6岁）｜教师：杨艺娜｜已招 9 人">【镇海】幼儿创意绘画班C103</span><span class="tn">杨艺娜 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】彩泥艺术手作班D103｜彩泥美术｜教师：杨艺娜｜已招 7 人">【镇海】彩泥艺术手作班D103</span><span class="tn">杨艺娜 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】幼儿创意绘画班F103｜幼儿画（4-6岁）｜教师：蔡金萍｜已招 18 人">【镇海】幼儿创意绘画班F103</span><span class="tn">蔡金萍 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿创意绘画班G103｜少儿画（7-8岁）｜教师：蔡金萍｜已招 16 人">【镇海】少儿创意绘画班G103</span><span class="tn">蔡金萍 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿创意绘画班H103｜幼儿画（4-6岁）｜教师：杨艺娜｜已招 20 人">【镇海】幼儿创意绘画班H103</span><span class="tn">杨艺娜 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">3 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室105</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿围棋班（进阶）A105｜围棋｜教师：谢梦竹｜已招 13 人">【镇海】少儿围棋班（进阶）A105</span><span class="tn">谢梦竹 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿围棋基础班（新班）B105｜围棋｜教师：谢梦竹｜已招 10 人">【镇海】幼儿围棋基础班（新班）B105</span><span class="tn">谢梦竹 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿围棋班（基础）新班C105｜围棋｜教师：徐冬明｜已招 15 人">【镇海】少儿围棋班（基础）新班C105</span><span class="tn">徐冬明 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿围棋班（进阶）D105｜围棋｜教师：徐冬明｜已招 16 人">【镇海】少儿围棋班（进阶）D105</span><span class="tn">徐冬明 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】少儿围棋班（提高）F105｜围棋｜教师：谢梦竹｜已招 22 人">【镇海】少儿围棋班（提高）F105</span><span class="tn">谢梦竹 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】数趣思维（6年级）G105｜数趣思维｜教师：陈美盆｜已招 6 人">【镇海】数趣思维（6年级）G105</span><span class="tn">陈美盆 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】Hello趣学（1年级） H105｜Hello趣学｜教师：吕招治｜已招 16 人">【镇海】Hello趣学（1年级） H105</span><span class="tn">吕招治 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">3 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室108</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】益智思维（中班）A108｜益智思维｜教师：黄品馨｜已招 13 人">【镇海】益智思维（中班）A108</span><span class="tn">黄品馨 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】Hello趣学（中大班）B108｜Hello趣学｜教师：范媛媛｜已招 17 人">【镇海】Hello趣学（中大班）B108</span><span class="tn">范媛媛 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】数形智力开发（中大班）C108｜数形智力开发｜教师：陈梦楠｜已招 17 人">【镇海】数形智力开发（中大班）C108</span><span class="tn">陈梦楠 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】魔方竞技基础班D108｜魔方竞技｜教师：杨帅｜已招 13 人">【镇海】魔方竞技基础班D108</span><span class="tn">杨帅 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿文学（1年级）E108｜少儿文学｜教师：林坤武｜已招 5 人">【镇海】少儿文学（1年级）E108</span><span class="tn">林坤武 · 周日 08:30-10:00</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】Hello趣学（2-3年级） G108｜Hello趣学｜教师：梁婕｜已招 10 人">【镇海】Hello趣学（2-3年级） G108</span><span class="tn">梁婕 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】数趣思维（1年级）H108｜数趣思维｜教师：赵琪｜已招 12 人">【镇海】数趣思维（1年级）H108</span><span class="tn">赵琪 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室201</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿小主持人班（基础）A201｜小主持人｜教师：颜如钰｜已招 11 人">【镇海】幼儿小主持人班（基础）A201</span><span class="tn">颜如钰 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】青年尊巴（健身燃脂）B201｜尊巴（健身燃脂）｜教师：朱泽曜｜已招 6 人">【镇海】青年尊巴（健身燃脂）B201</span><span class="tn">朱泽曜 · 周六 10:20-11:20</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿小主持人班（基础）C201｜小主持人｜教师：颜如钰｜已招 13 人">【镇海】幼儿小主持人班（基础）C201</span><span class="tn">颜如钰 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】青年女团爵士D201｜青年爵士舞/街舞｜教师：唐川燕｜已招 6 人">【镇海】青年女团爵士D201</span><span class="tn">唐川燕 · 周六 15:40-17:00</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿小主持人班（提高）E201｜小主持人｜教师：陈怡婷｜已招 12 人">【镇海】幼儿小主持人班（提高）E201</span><span class="tn">陈怡婷 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】青年尊巴（成品舞）F201｜尊巴（成品舞）｜教师：朱泽曜｜已招 9 人">【镇海】青年尊巴（成品舞）F201</span><span class="tn">朱泽曜 · 周日 10:20-11:20</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿小主持人班（提高）G201｜小主持人｜教师：颜如钰｜已招 18 人">【镇海】少儿小主持人班（提高）G201</span><span class="tn">颜如钰 · 周日 14:00-15:30</span></td>
+<td class="empty">空</td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="gaprow">
+<th>镇海教室203</th>
+<td style="text-align:center;font-weight:600">7</td>
+<td style="text-align:center;font-weight:600;color:#b42318">1</td>
+<td style="text-align:center"><span class="badge b-gap">有空档</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿国画书法班 A203｜国画（9-55岁）｜教师：陈翔｜已招 7 人">【镇海】少儿国画书法班 A203</span><span class="tn">陈翔 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿漫画班（动漫角色）B203｜卡通漫画（8-18岁）｜教师：谢雨琪｜已招 18 人">【镇海】少儿漫画班（动漫角色）B203</span><span class="tn">谢雨琪 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿漫画班（Q版漫画）C203｜卡通漫画（8-18岁）｜教师：谢雨琪｜已招 20 人">【镇海】少儿漫画班（Q版漫画）C203</span><span class="tn">谢雨琪 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿漫画班（动漫角色）D203｜卡通漫画（8-18岁）｜教师：谢雨琪｜已招 19 人">【镇海】少儿漫画班（动漫角色）D203</span><span class="tn">谢雨琪 · 周六 15:40-17:10</span></td>
+<td class="empty">空</td>
+<td class="used"><span class="cn" title="【镇海】少儿漫画班（动漫角色）F203｜卡通漫画（8-18岁）｜教师：谢雨琪｜已招 14 人">【镇海】少儿漫画班（动漫角色）F203</span><span class="tn">谢雨琪 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿国画书法班 G203｜国画（9-55岁）｜教师：谢铭一｜已招 7 人">【镇海】少儿国画书法班 G203</span><span class="tn">谢铭一 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿漫画班（Q版漫画）H203｜卡通漫画（8-18岁）｜教师：蔡金萍｜已招 18 人">【镇海】少儿漫画班（Q版漫画）H203</span><span class="tn">蔡金萍 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="">
+<th>钢琴教室</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used conflict"><span class="cn" title="【镇海】钢琴一对一 A1｜钢琴｜教师：郭骁｜已招 1 人">【镇海】钢琴一对一 A1</span><span class="tn">郭骁 · 周六 08:30-09:20</span><span class="cn" title="【镇海】钢琴一对一 A2｜钢琴｜教师：郭骁｜已招 1 人">【镇海】钢琴一对一 A2</span><span class="tn">郭骁 · 周六 09:30-10:20</span></td>
+<td class="used"><span class="cn" title="【镇海】钢琴一对一 A3｜钢琴｜教师：郭骁｜已招 1 人">【镇海】钢琴一对一 A3</span><span class="tn">郭骁 · 周六 10:30-11:20</span></td>
+<td class="used conflict"><span class="cn" title="【镇海】钢琴一对一 C4｜钢琴｜教师：邓蕾｜已招 1 人">【镇海】钢琴一对一 C4</span><span class="tn">邓蕾 · 周六 14:00-14:50</span><span class="cn" title="【镇海】钢琴一对一 C5｜钢琴｜教师：邓蕾｜已招 1 人">【镇海】钢琴一对一 C5</span><span class="tn">邓蕾 · 周六 15:00-15:50</span></td>
+<td class="used"><span class="cn" title="【镇海】钢琴一对一 C6｜钢琴｜教师：邓蕾｜已招 1 人">【镇海】钢琴一对一 C6</span><span class="tn">邓蕾 · 周六 16:00-16:50</span></td>
+<td class="used conflict"><span class="cn" title="【镇海】钢琴一对一 E7｜钢琴｜教师：李敏｜已招 0 人">【镇海】钢琴一对一 E7</span><span class="tn">李敏 · 周日 08:30-09:20</span><span class="cn" title="【镇海】钢琴一对一 E8｜钢琴｜教师：李敏｜已招 1 人">【镇海】钢琴一对一 E8</span><span class="tn">李敏 · 周日 09:30-10:20</span></td>
+<td class="used"><span class="cn" title="【镇海】钢琴一对一 E9｜钢琴｜教师：李敏｜已招 1 人">【镇海】钢琴一对一 E9</span><span class="tn">李敏 · 周日 10:30-11:20</span></td>
+<td class="used conflict"><span class="cn" title="【镇海】钢琴一对一 E9（中秋国庆加课）｜钢琴｜教师：李敏｜已招 1 人">【镇海】钢琴一对一 E9（中秋国庆加课）</span><span class="tn">李敏 · 周日 15:00-15:50</span><span class="cn" title="【镇海】钢琴一对一 G10｜钢琴｜教师：黄梦琳｜已招 1 人">【镇海】钢琴一对一 G10</span><span class="tn">黄梦琳 · 周日 14:00-14:50</span><span class="cn" title="【镇海】钢琴一对一 G11｜钢琴｜教师：黄梦琳｜已招 1 人">【镇海】钢琴一对一 G11</span><span class="tn">黄梦琳 · 周日 15:00-15:50</span></td>
+<td class="used"><span class="cn" title="【镇海】钢琴一对一 G12｜钢琴｜教师：黄梦琳｜已招 1 人">【镇海】钢琴一对一 G12</span><span class="tn">黄梦琳 · 周日 16:00-16:50</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="">
+<th>镇海二楼大礼堂</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="【镇海】儿童羽毛球 训练A｜羽毛球（镇海校区大礼堂）｜教师：杨琥｜已招 20 人">【镇海】儿童羽毛球 训练A</span><span class="tn">杨琥 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】儿童羽毛球 训练B｜羽毛球（镇海校区大礼堂）｜教师：杨琥｜已招 18 人">【镇海】儿童羽毛球 训练B</span><span class="tn">杨琥 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】儿童羽毛球 训练C｜羽毛球（镇海校区大礼堂）｜教师：杨琥｜已招 25 人">【镇海】儿童羽毛球 训练C</span><span class="tn">杨琥 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】儿童羽毛球 训练D｜羽毛球（镇海校区大礼堂）｜教师：杨琥｜已招 24 人">【镇海】儿童羽毛球 训练D</span><span class="tn">杨琥 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿体适能（1-4年级）E｜体能训练、跳绳｜教师：郑嘉华｜已招 11 人">【镇海】少儿体适能（1-4年级）E</span><span class="tn">郑嘉华 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】体适能（中大班）F｜体能训练、跳绳｜教师：郑嘉华｜已招 21 人">【镇海】体适能（中大班）F</span><span class="tn">郑嘉华 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿体适能 （感统专注训练）小班G｜体能训练、跳绳｜教师：蔡哲凯｜已招 5 人">【镇海】幼儿体适能 （感统专注训练）小班G</span><span class="tn">蔡哲凯 · 周日 14:30-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】体适能冲分营H｜体能训练、跳绳｜教师：郑嘉华｜已招 22 人">【镇海】体适能冲分营H</span><span class="tn">郑嘉华 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">4 / 4</td>
+</tr>
+<tr class="">
+<th>镇海教室104</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="【镇海】小小发明家 A104｜科创启蒙（搭建类）｜教师：朱丽娜｜已招 10 人">【镇海】小小发明家 A104</span><span class="tn">朱丽娜 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿小小发明家（中大班） B104｜科创启蒙（搭建类）｜教师：朱丽娜｜已招 10 人">【镇海】幼儿小小发明家（中大班） B104</span><span class="tn">朱丽娜 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿练字C104｜幼儿练字｜教师：陈淑红｜已招 15 人">【镇海】幼儿练字C104</span><span class="tn">陈淑红 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】机器人搭建（一二级）D104｜科创启蒙（搭建类）｜教师：杨露雪｜已招 9 人">【镇海】机器人搭建（一二级）D104</span><span class="tn">杨露雪 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】数趣思维（2年级） E104｜数趣思维｜教师：帅佳玲｜已招 5 人">【镇海】数趣思维（2年级） E104</span><span class="tn">帅佳玲 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】数趣思维（4年级）F104｜数趣思维｜教师：帅佳玲｜已招 7 人">【镇海】数趣思维（4年级）F104</span><span class="tn">帅佳玲 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】小小工程师（百变工程）G104｜科创启蒙（搭建类）｜教师：陈芷冰｜已招 12 人">【镇海】小小工程师（百变工程）G104</span><span class="tn">陈芷冰 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿文学（大班）H104｜少儿文学｜教师：李志梅｜已招 5 人">【镇海】少儿文学（大班）H104</span><span class="tn">李志梅 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">2 / 4</td>
+</tr>
+<tr class="">
+<th>镇海教室202</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="【镇海】青年小儿推拿  A202｜小儿推拿｜教师：王铖｜已招 7 人">【镇海】青年小儿推拿  A202</span><span class="tn">王铖 · 周六 08:30-09:50</span></td>
+<td class="used"><span class="cn" title="【镇海】机器人搭建（拓展）B202｜科创启蒙（搭建类）｜教师：杨露雪｜已招 12 人">【镇海】机器人搭建（拓展）B202</span><span class="tn">杨露雪 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】python编程初阶5级上册C202｜少儿编程｜教师：陈雅菁｜已招 12 人">【镇海】python编程初阶5级上册C202</span><span class="tn">陈雅菁 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】python编程入门新班D202｜少儿编程｜教师：陈雅菁｜已招 16 人">【镇海】python编程入门新班D202</span><span class="tn">陈雅菁 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿练字E202｜幼儿练字｜教师：陶群山｜已招 17 人">【镇海】幼儿练字E202</span><span class="tn">陶群山 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】硬笔书法（一年级）F202｜硬笔书法｜教师：陶群山｜已招 17 人">【镇海】硬笔书法（一年级）F202</span><span class="tn">陶群山 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】硬笔书法（一年级）G202｜硬笔书法｜教师：陈淑红｜已招 15 人">【镇海】硬笔书法（一年级）G202</span><span class="tn">陈淑红 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】硬笔书法（高年级） H202｜硬笔书法｜教师：陈淑红｜已招 21 人">【镇海】硬笔书法（高年级） H202</span><span class="tn">陈淑红 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">1 / 4</td>
+</tr>
+<tr class="">
+<th>镇海教室301</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿舞蹈班（高阶） A301｜中国舞｜教师：钟良倩｜已招 16 人">【镇海】少儿舞蹈班（高阶） A301</span><span class="tn">钟良倩 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿舞蹈班（幼龄班）B301｜中国舞｜教师：钟良倩｜已招 20 人">【镇海】幼儿舞蹈班（幼龄班）B301</span><span class="tn">钟良倩 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】街舞训练班(Hiphop) C301｜街舞｜教师：郑守涵｜已招 13 人">【镇海】街舞训练班(Hiphop) C301</span><span class="tn">郑守涵 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】街舞训练班(breaking) D301｜街舞｜教师：郑守涵｜已招 9 人">【镇海】街舞训练班(breaking) D301</span><span class="tn">郑守涵 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿舞蹈班（幼龄班） E301｜中国舞｜教师：谢佳｜已招 10 人">【镇海】幼儿舞蹈班（幼龄班） E301</span><span class="tn">谢佳 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿舞蹈班（中大班） F301｜中国舞｜教师：谢佳｜已招 13 人">【镇海】幼儿舞蹈班（中大班） F301</span><span class="tn">谢佳 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】街舞训练班  G301｜街舞｜教师：陈子琳｜已招 17 人">【镇海】街舞训练班  G301</span><span class="tn">陈子琳 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】街舞训练班 H301｜街舞｜教师：陈子琳｜已招 22 人">【镇海】街舞训练班 H301</span><span class="tn">陈子琳 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="">
+<th>镇海教室302</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿舞蹈精英班(陈老师) A302｜中国舞｜教师：陈巧虹｜已招 17 人">【镇海】少儿舞蹈精英班(陈老师) A302</span><span class="tn">陈巧虹 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿舞蹈班(进阶) B302｜中国舞｜教师：陈巧虹｜已招 18 人">【镇海】少儿舞蹈班(进阶) B302</span><span class="tn">陈巧虹 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿舞蹈班(提高) C302｜中国舞｜教师：邹宇婷｜已招 11 人">【镇海】少儿舞蹈班(提高) C302</span><span class="tn">邹宇婷 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿舞蹈班（中大班） D302｜中国舞｜教师：钟良倩｜已招 20 人">【镇海】幼儿舞蹈班（中大班） D302</span><span class="tn">钟良倩 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿舞蹈精英班(钟老师) E302｜中国舞｜教师：钟良倩｜已招 15 人">【镇海】少儿舞蹈精英班(钟老师) E302</span><span class="tn">钟良倩 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿舞蹈班（中大班） F302｜中国舞｜教师：钟良倩｜已招 9 人">【镇海】幼儿舞蹈班（中大班） F302</span><span class="tn">钟良倩 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】少儿舞蹈班(进阶)  G302｜中国舞｜教师：钟良倩｜已招 20 人">【镇海】少儿舞蹈班(进阶)  G302</span><span class="tn">钟良倩 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】幼儿舞蹈班（中大班） H302｜中国舞｜教师：钟良倩｜已招 10 人">【镇海】幼儿舞蹈班（中大班） H302</span><span class="tn">钟良倩 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+<tr class="">
+<th>镇海教室403</th>
+<td style="text-align:center;font-weight:600">8</td>
+<td style="text-align:center;font-weight:600;color:#12805c">0</td>
+<td style="text-align:center"><span class="badge b-full">满课</span></td>
+<td class="used"><span class="cn" title="【镇海】高效学习思维导图 低年级A403｜思维导图｜教师：孙春梅｜已招 14 人">【镇海】高效学习思维导图 低年级A403</span><span class="tn">孙春梅 · 周六 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】高效学习思维导图 高年级B403｜思维导图｜教师：孙春梅｜已招 19 人">【镇海】高效学习思维导图 高年级B403</span><span class="tn">孙春梅 · 周六 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】国际象棋初级新班C403｜国际象棋｜教师：陈丽红｜已招 9 人">【镇海】国际象棋初级新班C403</span><span class="tn">陈丽红 · 周六 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】国际象棋初级班D403｜国际象棋｜教师：陈丽红｜已招 10 人">【镇海】国际象棋初级班D403</span><span class="tn">陈丽红 · 周六 15:40-17:10</span></td>
+<td class="used"><span class="cn" title="【镇海】国际象棋初级班E403｜国际象棋｜教师：陈丽红｜已招 8 人">【镇海】国际象棋初级班E403</span><span class="tn">陈丽红 · 周日 08:30-10:00</span></td>
+<td class="used"><span class="cn" title="【镇海】国际象棋中级班F403｜国际象棋｜教师：陈丽红｜已招 9 人">【镇海】国际象棋中级班F403</span><span class="tn">陈丽红 · 周日 10:10-11:40</span></td>
+<td class="used"><span class="cn" title="【镇海】高效学习思维导图 低年级G403｜思维导图｜教师：孙春梅｜已招 9 人">【镇海】高效学习思维导图 低年级G403</span><span class="tn">孙春梅 · 周日 14:00-15:30</span></td>
+<td class="used"><span class="cn" title="【镇海】高效学习思维导图 高年级H403｜思维导图｜教师：孙春梅｜已招 7 人">【镇海】高效学习思维导图 高年级H403</span><span class="tn">孙春梅 · 周日 15:40-17:10</span></td>
+<td style="text-align:center;color:#1e429f;font-weight:600">0 / 4</td>
+</tr>
+</tbody></table></div>
+<script>
+function flt(inp){var t=document.getElementById('t-'+inp.dataset.t);var v=inp.value.trim();
+ t.querySelectorAll('tbody tr').forEach(function(tr){tr.style.display = tr.cells[0].innerText.indexOf(v)>=0 ? '' : 'none';});}
+</script>
+<h2>空教室明细清单（共 79 条）</h2>
+<div class="tbox"><table><thead><tr><th>#</th><th>区域</th><th>教室</th><th>星期</th><th>节次</th><th>时间段</th><th>该教室已排</th><th>该教室空闲</th></tr></thead><tbody>
+<tr><td>1</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学小操场</b></td><td>周六</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>2</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学小操场</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>3</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学小操场</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>4</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学小操场</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>5</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学小操场</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>6</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学小操场</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>7</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学小操场</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>8</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307-2</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>9</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307-2</b></td><td>周六</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>10</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307-2</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>11</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307-2</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>12</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307-2</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>13</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307-2</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>14</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室411</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>15</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室411</b></td><td>周六</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>16</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室411</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>17</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室411</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>18</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室411</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>19</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港4楼大舞蹈排练厅</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>4 / 8</td><td style="color:#b42318;font-weight:600">4</td></tr>
+<tr><td>20</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港4楼大舞蹈排练厅</b></td><td>周六</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>4 / 8</td><td style="color:#b42318;font-weight:600">4</td></tr>
+<tr><td>21</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港4楼大舞蹈排练厅</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>4 / 8</td><td style="color:#b42318;font-weight:600">4</td></tr>
+<tr><td>22</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港4楼大舞蹈排练厅</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>4 / 8</td><td style="color:#b42318;font-weight:600">4</td></tr>
+<tr><td>23</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港少年宫小飞鹭剧场右侧</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>24</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港少年宫小飞鹭剧场右侧</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>25</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>26</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室307</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>27</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室308</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>28</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室308</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>29</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室310</b></td><td>周六</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>30</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室310</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>31</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室311</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>32</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室311</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>33</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室406</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>34</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室406</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>35</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室407</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>36</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室407</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>37</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室409</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>38</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室409</b></td><td>周六</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>39</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室303</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>40</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室401</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>41</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室403</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>42</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>厦港教室404</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>43</td><td><span class="dot" style="background:#2f6fed"></span> 厦港校区</td><td><b>思明小学教学楼一楼架空层</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>44</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>厦禾社区二楼</b></td><td>周六</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>45</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>厦禾社区二楼</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>46</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>厦禾社区二楼</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>47</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>厦禾社区二楼</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>48</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>厦禾社区二楼</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>49</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>厦禾社区二楼</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>50</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>厦禾社区二楼</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>1 / 8</td><td style="color:#b42318;font-weight:600">7</td></tr>
+<tr><td>51</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室109</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>52</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室109</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>53</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室109</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>54</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室109</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>55</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室109</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>56</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室109</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>2 / 8</td><td style="color:#b42318;font-weight:600">6</td></tr>
+<tr><td>57</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室402</b></td><td>周六</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>58</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室402</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>59</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室402</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>60</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室402</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>61</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室402</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>3 / 8</td><td style="color:#b42318;font-weight:600">5</td></tr>
+<tr><td>62</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室101</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>63</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室101</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>64</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室101</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>65</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室106</b></td><td>周六</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>66</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室106</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>67</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室106</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>68</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室107</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>69</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室107</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>70</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室107</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>5 / 8</td><td style="color:#b42318;font-weight:600">3</td></tr>
+<tr><td>71</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室401</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>72</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室401</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>6 / 8</td><td style="color:#b42318;font-weight:600">2</td></tr>
+<tr><td>73</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海二楼礼堂02</b></td><td>周六</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>74</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室102</b></td><td>周日</td><td>下午第1节</td><td><b>14:00-15:30</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>75</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室103</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>76</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室105</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>77</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室108</b></td><td>周日</td><td>上午第2节</td><td><b>10:10-11:40</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>78</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室201</b></td><td>周日</td><td>下午第2节</td><td><b>15:40-17:10</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+<tr><td>79</td><td><span class="dot" style="background:#e0762a"></span> 镇海校区</td><td><b>镇海教室203</b></td><td>周日</td><td>上午第1节</td><td><b>08:30-10:00</b></td><td>7 / 8</td><td style="color:#b42318;font-weight:600">1</td></tr>
+</tbody></table></div>
+<div class="note"><b>空档最多的教室 TOP 8：</b>
+思明小学小操场（厦港校区 · 7 节空）　厦禾社区二楼（镇海校区 · 7 节空）　厦港教室307-2（厦港校区 · 6 节空）　镇海教室109（镇海校区 · 6 节空）　镇海教室402（镇海校区 · 5 节空）　厦港教室411（厦港校区 · 5 节空）　厦港4楼大舞蹈排练厅（厦港校区 · 4 节空）　镇海教室107（镇海校区 · 3 节空）
+</div>
+<h2>未匹配标准节次的周末课程（需人工确认）</h2>
+<div class="tbox"><table><thead><tr><th>区域</th><th>教室</th><th>班级名称</th><th>专业</th><th>教师</th><th>上课时间</th></tr></thead><tbody>
+<tr><td>镇海校区</td><td>钢琴教室</td><td>【镇海】钢琴一对一 E10</td><td>钢琴</td><td>李敏</td><td><b>周日 11:30-12:20</b></td></tr>
+<tr><td>厦港校区</td><td>厦港教室307-2</td><td>（厦港）钢琴一对一 周日18:30李老师</td><td>钢琴</td><td>李敏</td><td><b>周日 18:30-19:20</b></td></tr>
+</tbody></table></div>
+<div class="foot">生成时间：2026-09-28 ｜ 统计节次：周六/周日 上午+下午 共 8 节/教室</div>
+</div></body></html>

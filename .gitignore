@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 中间产物
+*.pkl
+*.tmp
+
+# 工作区私有数据（含日志、记忆）
+.workbuddy/
+
+# Office 临时锁文件
+~$*.xls
+~$*.xlsx
+
+# 系统
+.DS_Store
+Thumbs.db
