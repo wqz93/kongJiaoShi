@@ -1,0 +1,785 @@
+{
+ "edu": [
+  {
+   "name": "开班管理",
+   "children": [
+    {
+     "name": "开班设置",
+     "href": "/edumanage/ic/iclass/list?reqFlag=1"
+    },
+    {
+     "name": "班级审核",
+     "href": "/edumanage/ic/iclass/auditList?reqFlag=1"
+    },
+    {
+     "name": "班级发布",
+     "href": "/edumanage/ic/iclass/classIssueList?reqFlag=1"
+    },
+    {
+     "name": "按教室开班",
+     "href": "/edumanage/ic/iclass/querySchedule?reqFlag=1"
+    },
+    {
+     "name": "教室排课查询",
+     "href": "/edumanage/ic/classScheduleTmp/list?reqFlag=1"
+    },
+    {
+     "name": "开班模板管理",
+     "href": "/edumanage/ic/classModel/list"
+    }
+   ]
+  },
+  {
+   "name": "班级管理",
+   "children": [
+    {
+     "name": "班级管理",
+     "href": "/edumanage/ic/iclass/manageList?reqFlag=1&amp;status=3"
+    },
+    {
+     "name": "班级资源",
+     "href": "/edumanage/ic/iclass/classResClassList?reqFlag=1"
+    },
+    {
+     "name": "班级作业",
+     "href": "/edumanage/ic/iclass/homeWorkClassList?reqFlag=1"
+    },
+    {
+     "name": "班级摇号",
+     "href": "/edumanage/ic/iclass/iclassRandomList?reqFlag=1"
+    },
+    {
+     "name": "财务换班",
+     "href": "/edumanage/ic/changeClass/changeClassSelect"
+    },
+    {
+     "name": "财务换班日志",
+     "href": "/edumanage/ic/changeClass/list?type=1&amp;reqFlag=1"
+    },
+    {
+     "name": "班级查询",
+     "href": "/edumanage/ic/iclass/classSelect?reqFlag=1"
+    },
+    {
+     "name": "点评汇总",
+     "href": "/edumanage/ic/comments/commentsList"
+    },
+    {
+     "name": "平行班日志",
+     "href": "/edumanage/ic/changeClass/sameClassLog?reqFlag=1"
+    },
+    {
+     "name": "家长投诉",
+     "href": "/edumanage/ic/complaint"
+    }
+   ]
+  },
+  {
+   "name": "报名管理",
+   "children": [
+    {
+     "name": "教务报名",
+     "href": "/edumanage/ic/iclass/applyClassList?reqFlag=1"
+    },
+    {
+     "name": "学员报名",
+     "href": "/edumanage/student/signUp"
+    },
+    {
+     "name": "集体报名",
+     "href": "/edumanage/ic/iclass/collectiveApply?reqFlag=1"
+    },
+    {
+     "name": "学员报名查询",
+     "href": "/edumanage/student/studentApplyList"
+    },
+    {
+     "name": "班级报名查询",
+     "href": "/edumanage/ic/iclass/classApplyList?reqFlag=1"
+    },
+    {
+     "name": "报名失效",
+     "href": "/edumanage/ic/iclass/paymentList"
+    },
+    {
+     "name": "集体代缴",
+     "href": "/edumanage/ic/iclass/collectivePay"
+    },
+    {
+     "name": "导入报名",
+     "href": "/edumanage/ic/iclass/applyImportList?reqFlag=1"
+    },
+    {
+     "name": "报名打折",
+     "href": "/edumanage/px/apply/applyDiscount?reFlag=1"
+    },
+    {
+     "name": "报名激活",
+     "href": "/edumanage/px/apply/applyActive?reFlag=1"
+    },
+    {
+     "name": "候补预约",
+     "href": "/edumanage/ic/classReservation/list?status=1&amp;reqFlag=1"
+    },
+    {
+     "name": "报名缴费签字管理",
+     "href": "/edumanage/px/notepad/form"
+    }
+   ]
+  },
+  {
+   "name": "学员管理",
+   "children": [
+    {
+     "name": "学员信息管理",
+     "href": "/edumanage/student/list"
+    },
+    {
+     "name": "外籍学员录入",
+     "href": "/edumanage/student/wjform"
+    },
+    {
+     "name": "新老学员查询",
+     "href": "/edumanage/student/query?reqFlag=1"
+    },
+    {
+     "name": "点到课次查询",
+     "href": "/edumanage/student/signInSelect"
+    },
+    {
+     "name": "年级升级",
+     "href": "/edumanage/student/upgradeList"
+    },
+    {
+     "name": "班级学员管理",
+     "href": "/edumanage/student/classStudForm"
+    }
+   ]
+  },
+  {
+   "name": "教师管理",
+   "children": [
+    {
+     "name": "教师信息管理",
+     "href": "/edumanage/teacher/list"
+    },
+    {
+     "name": "教师请假",
+     "href": "/edumanage/teachLeave/list"
+    },
+    {
+     "name": "教师课表",
+     "href": "/edumanage/teachSched/list?reqFlag=1"
+    },
+    {
+     "name": "请假审批",
+     "href": "/edumanage/teachLeave/reviewList"
+    },
+    {
+     "name": "教师费用设置",
+     "href": "/edumanage/tch/feeSet"
+    }
+   ]
+  },
+  {
+   "name": "短信管理",
+   "children": [
+    {
+     "name": "学员短信发送",
+     "href": "/edumanage/sms/smssend/stuForm"
+    },
+    {
+     "name": "学员短信查询",
+     "href": "/edumanage/sms/smssend/stuList?type=1"
+    },
+    {
+     "name": "教师短信发送",
+     "href": "/edumanage/sms/smssend/teacherSend"
+    },
+    {
+     "name": "教师短信查询",
+     "href": "/edumanage/sms/smssend/teacherList"
+    },
+    {
+     "name": "职工短信发送",
+     "href": "/edumanage/sms/smssend/staffSend"
+    },
+    {
+     "name": "职工短信查询",
+     "href": "/edumanage/sms/smssend/staffList"
+    },
+    {
+     "name": "摇号短信发送",
+     "href": "/edumanage/sms/smssend/randomForm"
+    },
+    {
+     "name": "摇号短信查询",
+     "href": "/edumanage/sms/smssend/randomList"
+    },
+    {
+     "name": "短号设置",
+     "href": "/edumanage/sms/userCornet/list"
+    },
+    {
+     "name": "短信回复查询",
+     "href": "/edumanage/sms/reply/list"
+    },
+    {
+     "name": "短信统计",
+     "href": "/edumanage/sms/smssend/list"
+    },
+    {
+     "name": "全体学员短信发送",
+     "href": "/edumanage/sms/smssend/stuFormAll"
+    },
+    {
+     "name": "全体学员短信查询",
+     "href": "/edumanage/sms/smssend/stuAllList"
+    },
+    {
+     "name": "报名未缴费短信通知",
+     "href": "/edumanage/sms/smssend/payNoticeForm"
+    },
+    {
+     "name": "报名未缴费短信查询",
+     "href": "/edumanage/sms/smssend/payNoticeSendList"
+    },
+    {
+     "name": "短信自建组管理",
+     "href": "/edumanage/sms/smsgroup/list"
+    },
+    {
+     "name": "自建组短信发送",
+     "href": "/edumanage/sms/smssend/smsGroupSend"
+    },
+    {
+     "name": "自建组短信查询",
+     "href": "/edumanage/sms/smssend/smsGroupList?type=8"
+    }
+   ]
+  },
+  {
+   "name": "财务管理",
+   "children": [
+    {
+     "name": "培训收费",
+     "href": "/edumanage/fund/pay/?status=1&amp;reqFlag=1"
+    },
+    {
+     "name": "缴费管理",
+     "href": "/edumanage/fund/charge/list?reqFlag=1"
+    },
+    {
+     "name": "退费记录",
+     "href": "/edumanage/fund/charge/refundList?reqFlag=1"
+    },
+    {
+     "name": "财务收费结算表",
+     "href": "/edumanage/fund/charge/statisticsList"
+    },
+    {
+     "name": "报名收费情况查询",
+     "href": "/edumanage/fund/charge/registFee?reqFlag=1"
+    },
+    {
+     "name": "打折清单",
+     "href": "/edumanage/fund/charge/discountList?reqFlag=1"
+    },
+    {
+     "name": "财务审核",
+     "href": "/edumanage/fund/refundAudit/refundAuditList?auditType=2"
+    },
+    {
+     "name": "批量打折",
+     "href": "/edumanage/fund/pay/discountBatchList?status=1&amp;reqFlag=1"
+    },
+    {
+     "name": "教务审核",
+     "href": "/edumanage/fund/refundAudit/refundAuditList?auditType=1"
+    },
+    {
+     "name": "退费金额调整",
+     "href": "/edumanage/fund/charge/secondRefundList?reqFlag=1"
+    }
+   ]
+  },
+  {
+   "name": "自动打折",
+   "children": [
+    {
+     "name": "限时自动打折",
+     "href": "/edumanage/discount/timeLimit/list"
+    },
+    {
+     "name": "班级自动打折",
+     "href": "/edumanage/discount/class/list"
+    },
+    {
+     "name": "自动打折设置",
+     "href": "/edumanage/discount/setting/form"
+    }
+   ]
+  },
+  {
+   "name": "点到管理",
+   "children": [
+    {
+     "name": "我要点到",
+     "href": "/edumanage/ic/iclass/userSignInList?reqFlag=1"
+    },
+    {
+     "name": "已点班级",
+     "href": "/edumanage/ic/iclass/signInedClass?reqFlag=1"
+    },
+    {
+     "name": "未点到班级",
+     "href": "/edumanage/ic/iclass/unSignInClass?reqFlag=1"
+    },
+    {
+     "name": "应点未点",
+     "href": "/edumanage/ic/iclass/unSignInClass?reqFlag=2"
+    },
+    {
+     "name": "点到汇总",
+     "href": "/edumanage/ic/signIn/signInStatistic?reqFlag=1"
+    }
+   ]
+  },
+  {
+   "name": "支付管理",
+   "children": [
+    {
+     "name": "订单管理",
+     "href": "/edumanage/order/order/list"
+    },
+    {
+     "name": "未推送订单",
+     "href": "/edumanage/order/unPush/list"
+    }
+   ]
+  },
+  {
+   "name": "基础数据",
+   "children": [
+    {
+     "name": "专业管理",
+     "href": "/edumanage/bs/specialty?status=1&amp;name=&amp;subject="
+    },
+    {
+     "name": "教材管理",
+     "href": "/edumanage/bs/book"
+    },
+    {
+     "name": "教室管理",
+     "href": "/edumanage/bs/classroom"
+    },
+    {
+     "name": "部门专业分配",
+     "href": "/edumanage/bs/officeSpec"
+    },
+    {
+     "name": "人员专业分配",
+     "href": "/edumanage/bs/userSpec?reqFlag=1"
+    },
+    {
+     "name": "打折理由分配",
+     "href": "/edumanage/bs/allotDiscount"
+    }
+   ]
+  },
+  {
+   "name": "系统管理",
+   "children": [
+    {
+     "name": "用户管理",
+     "href": "/edumanage/sys/optUser/index"
+    },
+    {
+     "name": "机构管理",
+     "href": "/edumanage/sys/org/index"
+    },
+    {
+     "name": "角色管理",
+     "href": "/edumanage/sys/role/list"
+    },
+    {
+     "name": "数据字典管理",
+     "href": "/edumanage/sys/orgDict/index"
+    },
+    {
+     "name": "人工打折管理",
+     "href": "/edumanage/manually/discount/"
+    },
+    {
+     "name": "站点全局设置",
+     "href": "/edumanage/sys/setting/form"
+    },
+    {
+     "name": "区域参数设置",
+     "href": "/edumanage/sys/district"
+    },
+    {
+     "name": "短信设置",
+     "href": "/edumanage/sms/smsApplySet/form"
+    },
+    {
+     "name": "增值税开票设置",
+     "href": "/edumanage/sys/invoiceSetting/form"
+    },
+    {
+     "name": "Banner管理",
+     "href": "/edumanage/sys/banner"
+    },
+    {
+     "name": "单位介绍及报名向导",
+     "href": "/edumanage/sys/orgSetting/form"
+    },
+    {
+     "name": "节日管理",
+     "href": "/edumanage/sys/holiday/list"
+    }
+   ]
+  },
+  {
+   "name": "教学统计分析",
+   "children": [
+    {
+     "name": "学员年龄统计",
+     "href": "/edumanage/tchingCompter/ageCompter?reqFlag=1"
+    },
+    {
+     "name": "职称统计",
+     "href": "/edumanage/tchingCompter/titreCompter?reqFlag=1"
+    },
+    {
+     "name": "学历统计",
+     "href": "/edumanage/tchingCompter/degreeCompter?reqFlag=1"
+    },
+    {
+     "name": "教学安排分析",
+     "href": "/edumanage/tchingCompter/arrangeAnalysis?reqFlag=1"
+    },
+    {
+     "name": "招生状况统计",
+     "href": "/edumanage/tchingCompter/recruitAnalysis?reqFlag=1"
+    },
+    {
+     "name": "新生统计",
+     "href": "/edumanage/tchingCompter/newBornCompter?reqFlag=1"
+    },
+    {
+     "name": "培训班登记表",
+     "href": "/edumanage/tchingCompter/classRegister?reqFlag=1"
+    },
+    {
+     "name": "教室登记表",
+     "href": "/edumanage/tchingCompter/classCheck?reqFlag=1"
+    },
+    {
+     "name": "教务管理行事表",
+     "href": "/edumanage/tchingCompter/teacherAct?reqFlag=1"
+    },
+    {
+     "name": "班级留生率分析",
+     "href": "/edumanage/tchingCompter/classStay?reqFlag=1"
+    },
+    {
+     "name": "生源地统计",
+     "href": "/edumanage/tchingCompter/school?reqFlag=1"
+    }
+   ]
+  },
+  {
+   "name": "数据分析",
+   "children": [
+    {
+     "name": "招生人数年度对比",
+     "href": "/edumanage/dataCenter/recruit?reqFlag=1"
+    },
+    {
+     "name": "学员年龄比例",
+     "href": "/edumanage/dataCenter/stuAge?reqFlag=1"
+    },
+    {
+     "name": "学员男女比例",
+     "href": "/edumanage/dataCenter/stuSex?reqFlag=1"
+    },
+    {
+     "name": "报名门次",
+     "href": "/edumanage/dataCenter/stuApplyNum?reqFlag=1"
+    },
+    {
+     "name": "报名行为分析",
+     "href": "/edumanage/dataCenter/applyNum?reqFlag=1"
+    }
+   ]
+  },
+  {
+   "name": "活动报名",
+   "children": [
+    {
+     "name": "活动管理",
+     "href": "/edumanage/ac/wzActivity/list"
+    },
+    {
+     "name": "报名管理",
+     "href": "/edumanage/acmem/wzActivityMember/list"
+    },
+    {
+     "name": "核销人员管理",
+     "href": "/edumanage/pin/wzPin/list"
+    }
+   ]
+  },
+  {
+   "name": "班牌管理",
+   "children": [
+    {
+     "name": "信息发布",
+     "href": "/edumanage/bp/classmanagements/list"
+    }
+   ]
+  },
+  {
+   "name": "新闻动态",
+   "children": [
+    {
+     "name": "新闻发布",
+     "href": "/edumanage/news/classmanagements/list"
+    }
+   ]
+  }
+ ],
+ "wz": [
+  {
+   "name": "综合活动",
+   "children": [
+    {
+     "name": "活动管理",
+     "href": "/edumanage/acts/activitys/list"
+    }
+   ]
+  },
+  {
+   "name": "单项网络活动",
+   "children": [
+    {
+     "name": "网上投票",
+     "href": "/edumanage/acts/wzVote/list"
+    },
+    {
+     "name": "网上调查",
+     "href": "/edumanage/acts/wzInvestigation/list"
+    },
+    {
+     "name": "网上征集",
+     "href": "/edumanage/acts/wzCollection/list"
+    }
+   ]
+  },
+  {
+   "name": "在线答题",
+   "children": [
+    {
+     "name": "试题管理",
+     "href": "/edumanage/acts/wzTestquestions/list"
+    },
+    {
+     "name": "试卷管理",
+     "href": "/edumanage/acts/wzTestpaper/list"
+    },
+    {
+     "name": "试题闯关",
+     "href": "/edumanage/acts/wzTestpaper/cglist"
+    },
+    {
+     "name": "PK赛",
+     "href": "/edumanage/acts/wzTestpaper/pkList"
+    }
+   ]
+  },
+  {
+   "name": "假日营（地面）活动",
+   "children": [
+    {
+     "name": "活动管理",
+     "href": "/edumanage/ac/wzActivity/list"
+    },
+    {
+     "name": "报名管理",
+     "href": "/edumanage/acmem/wzActivityMember/list"
+    },
+    {
+     "name": "核销人员管理",
+     "href": "/edumanage/pin/wzPin/list"
+    }
+   ]
+  },
+  {
+   "name": "场馆活动管理",
+   "children": [
+    {
+     "name": "童玩空间",
+     "href": "/edumanage/ac/wzActivity/placeList"
+    }
+   ]
+  }
+ ],
+ "dat": [
+  {
+   "name": "数据中心",
+   "children": [
+    {
+     "name": "招生人数年度对比",
+     "href": "/edumanage/dataCenter/recruit?reqFlag=1"
+    },
+    {
+     "name": "学员年龄比例",
+     "href": "/edumanage/dataCenter/stuAge?reqFlag=1"
+    },
+    {
+     "name": "学员男女比例",
+     "href": "/edumanage/dataCenter/stuSex?reqFlag=1"
+    },
+    {
+     "name": "报名门次",
+     "href": "/edumanage/dataCenter/stuApplyNum?reqFlag=1"
+    },
+    {
+     "name": "报名行为分析",
+     "href": "/edumanage/dataCenter/applyNum?reqFlag=1"
+    },
+    {
+     "name": "学员年龄趋势",
+     "href": "/edumanage/dataCenter/avgAge?reqFlag=1"
+    }
+   ]
+  },
+  {
+   "name": "数据大屏",
+   "children": [
+    {
+     "name": "数据大屏",
+     "href": "/edumanage/static/dat/dat.jsp"
+    }
+   ]
+  }
+ ],
+ "sys": [
+  {
+   "name": "系统维护",
+   "children": [
+    {
+     "name": "用户管理",
+     "href": "/edumanage/sys/optUser/index"
+    },
+    {
+     "name": "机构管理",
+     "href": "/edumanage/sys/org/index"
+    },
+    {
+     "name": "角色管理",
+     "href": "/edumanage/sys/role/list"
+    }
+   ]
+  }
+ ],
+ "tg": [
+  {
+   "name": "托管班管理",
+   "children": [
+    {
+     "name": "托管班开班",
+     "href": "/edumanage/tg/afterSchoolClass/list?reqFlag=1"
+    },
+    {
+     "name": "托管班审核",
+     "href": "/edumanage/tg/afterSchoolClass/auditList?reqFlag=1"
+    },
+    {
+     "name": "托管班发布",
+     "href": "/edumanage/tg/afterSchoolClass/issueList?reqFlag=1"
+    },
+    {
+     "name": "托管班级管理",
+     "href": "/edumanage/tg/afterSchoolClass/manageList?reqFlag=1"
+    }
+   ]
+  },
+  {
+   "name": "托管班报名管理",
+   "children": [
+    {
+     "name": "教务报名",
+     "href": "/edumanage/tg/afterSchoolClass/applyClassList?reqFlag=1"
+    }
+   ]
+  },
+  {
+   "name": "托管班财务管理",
+   "children": [
+    {
+     "name": "培训收费",
+     "href": "/edumanage/tg/tgApply/payList?status=1&amp;reqFlag=1"
+    },
+    {
+     "name": "缴费管理",
+     "href": "/edumanage/tg/tgCharge/list?reqFlag=1"
+    },
+    {
+     "name": "财务收费结算表",
+     "href": "/edumanage/tg/tgCharge/statisticsList"
+    }
+   ]
+  },
+  {
+   "name": "托管班设置",
+   "children": [
+    {
+     "name": "托管点管理",
+     "href": "/edumanage/tg/hostPoint"
+    },
+    {
+     "name": "托管班全局设置",
+     "href": "/edumanage/sys/setting/tgForm"
+    },
+    {
+     "name": "协议设置",
+     "href": "/edumanage/sys/orgSetting/tgForm"
+    }
+   ]
+  }
+ ],
+ "jkpt": [
+  {
+   "name": "系统设置",
+   "children": [
+    {
+     "name": "设备管理",
+     "href": "/edumanage/sys/machineCode"
+    }
+   ]
+  },
+  {
+   "name": "基础信息",
+   "children": [
+    {
+     "name": "学生头像",
+     "href": "/edumanage/cctv/face/studList"
+    },
+    {
+     "name": "教师头像",
+     "href": "/edumanage/cctv/face/teachList"
+    },
+    {
+     "name": "职工头像",
+     "href": "/edumanage/cctv/face/workerList"
+    },
+    {
+     "name": "出入记录",
+     "href": "/edumanage/cctv/face/inOutList?type=1"
+    }
+   ]
+  }
+ ]
+}

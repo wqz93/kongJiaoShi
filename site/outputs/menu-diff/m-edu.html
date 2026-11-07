@@ -1,0 +1,962 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>统一管理平台</title>
+
+	
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=9,IE=10">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-store">
+
+<!-- 引入jquery插件 -->
+<script src="/edumanage/static/jquery/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script src="/edumanage/static/jquery/jquery-migrate-1.1.1.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/edumanage/static/TableDnD/jquery.tablednd.js"></script>
+
+
+<!-- 引入依赖的第三方插件 -->
+<script src="/edumanage/static/slimscroll/jquery.slimscroll.min.js"></script>
+
+
+
+<script src="/edumanage/static/jquery-validation/1.14.0/jquery.validate.min.js" type="text/javascript"></script>
+<script src="/edumanage/static/jquery-validation/1.14.0/localization/messages_zh.min.js" type="text/javascript"></script>
+<link href="/edumanage/static/jquery-jbox/2.3/Skins/Bootstrap/jbox.min.css" rel="stylesheet">
+<script src="/edumanage/static/jquery-jbox/2.3/jquery.jBox-2.3.min.js" type="text/javascript"></script>
+<script src="/edumanage/static/My97DatePicker/WdatePicker.js" type="text/javascript"></script><link href="/edumanage/static/My97DatePicker/skin/WdatePicker.css" rel="stylesheet" type="text/css">
+<script src="/edumanage/static/pace/pace.min.js"></script>
+<script src="/edumanage/static/metisMenu/jquery.metisMenu.js"></script>
+<link href="/edumanage/static/iCheck/custom.css" rel="stylesheet">
+<script src="/edumanage/static/iCheck/icheck.min.js"></script>
+<script src="/edumanage/static/iCheck/icheck-init.js"></script>
+<link href="/edumanage/static/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+<script src="/edumanage/static/dataTables/jquery.dataTables.js"></script>
+<script src="/edumanage/static/dataTables/dataTables.bootstrap.js"></script>
+
+<!-- 二维码插件 -->
+<script type="text/javascript" src="/edumanage/static/jquery-qrcode/jquery.qrcode.min.js"></script>
+
+
+
+<!-- jeeplus -->
+<link href="/edumanage/static/common/jeeplus.css?v=20240718" type="text/css" rel="stylesheet">
+<script src="/edumanage/static/common/jeeplus.js?v=20240718" type="text/javascript"></script>
+
+<!-- jquery ui -->
+<script src="/edumanage/static/jquery-ui/jquery-ui.min.js"></script>
+<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> -->
+
+
+<!-- 引入bootstrap插件 -->
+<!-- bootswatch主题效果不怎么好，停止切换，使用官网的默认版本，如果你想切换主题请访问http://bootswatch.com/下载最新版版主题，by刘高峰 -->
+<!--  <link href="/edumanage/static/bootstrap/3.3.4/css_default/bootstrap.min.css" type="text/css" rel="stylesheet" />-->
+<link href="/edumanage/static/bootstrap/3.3.4/css_default/bootstrap.min.css" type="text/css" rel="stylesheet">
+<script src="/edumanage/static/bootstrap/3.3.4/js/bootstrap.min.js" type="text/javascript"></script>
+<link href="/edumanage/static/awesome/4.4/css/font-awesome.min.css" rel="stylesheet">
+<link href="/edumanage/static/common/css/style.css?v=3.2.0" type="text/css" rel="stylesheet">
+
+<!-- 引入layer插件 -->
+<script src="/edumanage/static/layer-v2.3/layer/layer.js"></script><link rel="stylesheet" href="https://www.qsnedu.com/edumanage/static/layer-v2.3/layer/skin/layer.css" id="layui_layer_skinlayercss" style="">
+<script src="/edumanage/static/layer-v2.3/layer/laydate/laydate.js"></script><link type="text/css" rel="stylesheet" href="https://www.qsnedu.com/edumanage/static/layer-v2.3/layer/laydate/need/laydate.css"><link type="text/css" rel="stylesheet" href="https://www.qsnedu.com/edumanage/static/layer-v2.3/layer/laydate/skins/default/laydate.css" id="LayDateSkin">
+
+<!--引入webuploader-->
+<link rel="stylesheet" type="text/css" href="/edumanage/static/webuploader-0.1.5/webuploader.css">
+<script type="text/javascript" src="/edumanage/static/webuploader-0.1.5/webuploader.js"></script>
+
+
+<!-- 引入自定义文件 -->
+<script src="/edumanage/static/common/mustache.min.js" type="text/javascript"></script>
+<script src="/edumanage/static/common/content.js" type="text/javascript"></script>
+<link href="/edumanage/static/common/css/login.css" type="text/css" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+	<script src="/edumanage/static/common/inspinia.js?v=3.2.0"></script>
+	<script src="/edumanage/static/common/contabs.js"></script> 
+    <meta name="keywords" content="统一管理平台">
+    <meta name="description" content="统一管理平台">
+    <script type="text/javascript">
+    
+    	function logout() {
+    		location.href = "/edumanage/syslogout";
+    	}
+			
+	</script>
+<style>
+    .textCetent{
+    display: table-cell;
+   text-align: center;
+   vertical-align: middle;
+    }
+
+</style>
+<link rel="stylesheet" href="https://www.qsnedu.com/edumanage/static/layer-v2.3/layer/skin/layer.ext.css" id="layui_layer_skinlayerextcss" style=""><link rel="stylesheet" href="https://www.qsnedu.com/edumanage/static/layer-v2.3/layer/skin/moon/style.css" id="layui_layer_skinmoonstylecss" style=""></head>
+
+<body class="fixed-sidebar full-height-layout gray-bg  pace-done"><div class="pace  pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="width: 100%;">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div>
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            <div class="slimScrollDiv" style="position: relative; width: auto; height: 100%;"><div class="sidebar-collapse" style="width: auto; height: 100%;">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                <input type="hidden" id="orgId" value="0B6FC8D474F21CA6E0530100007F839B">
+                                <span class="block m-t-xs"><strong class="font-bold">厦门市思明区青少年宫</strong></span>
+                               <span class="block m-t-xs"><strong class="font-bold">吴奇志</strong></span>
+                               <span class="text-muted text-xs block">普通用户<b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                               
+                                <li><a class="J_menuItem" href="/edumanage/sys/optUser/queryOptUser" data-index="0">个人资料</a>
+                                </li>
+                                
+                                 <li class="divider"></li>
+                                <li class="divider"></li>
+                                <li><a href="/edumanage/syslogout">安全退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">JP
+                        </div>
+                    </li>
+     
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-object-group"></i> 
+                  			<span class="nav-label">开班管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/list?reqFlag=1" data-index="1"><i class="fa "></i> <span class="nav-label">开班设置</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/auditList?reqFlag=1" data-index="2"><i class="fa "></i> <span class="nav-label">班级审核</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/classIssueList?reqFlag=1" data-index="3"><i class="fa "></i> <span class="nav-label">班级发布</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/querySchedule?reqFlag=1" data-index="4"><i class="fa "></i> <span class="nav-label">按教室开班</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/classScheduleTmp/list?reqFlag=1" data-index="5"><i class="fa "></i> <span class="nav-label">教室排课查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/classModel/list" data-index="6"><i class="fa "></i> <span class="nav-label">开班模板管理</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-users"></i> 
+                  			<span class="nav-label">班级管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/manageList?reqFlag=1&amp;status=3" data-index="7"><i class="fa "></i> <span class="nav-label">班级管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/classResClassList?reqFlag=1" data-index="8"><i class="fa "></i> <span class="nav-label">班级资源</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/homeWorkClassList?reqFlag=1" data-index="9"><i class="fa "></i> <span class="nav-label">班级作业</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/iclassRandomList?reqFlag=1" data-index="10"><i class="fa "></i> <span class="nav-label">班级摇号</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/changeClass/changeClassSelect" data-index="11"><i class="fa "></i> <span class="nav-label">财务换班</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/changeClass/list?type=1&amp;reqFlag=1" data-index="12"><i class="fa "></i> <span class="nav-label">财务换班日志</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/classSelect?reqFlag=1" data-index="13"><i class="fa "></i> <span class="nav-label">班级查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/comments/commentsList" data-index="14"><i class="fa "></i> <span class="nav-label">点评汇总</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/changeClass/sameClassLog?reqFlag=1" data-index="15"><i class="fa "></i> <span class="nav-label">平行班日志</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/complaint" data-index="16"><i class="fa "></i> <span class="nav-label">家长投诉</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-child"></i> 
+                  			<span class="nav-label">报名管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/applyClassList?reqFlag=1" data-index="17"><i class="fa "></i> <span class="nav-label">教务报名</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/signUp" data-index="18"><i class="fa "></i> <span class="nav-label">学员报名</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/collectiveApply?reqFlag=1" data-index="19"><i class="fa "></i> <span class="nav-label">集体报名</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/studentApplyList" data-index="20"><i class="fa "></i> <span class="nav-label">学员报名查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/classApplyList?reqFlag=1" data-index="21"><i class="fa "></i> <span class="nav-label">班级报名查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/paymentList" data-index="22"><i class="fa "></i> <span class="nav-label">报名失效</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/collectivePay" data-index="23"><i class="fa "></i> <span class="nav-label">集体代缴</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/applyImportList?reqFlag=1" data-index="24"><i class="fa "></i> <span class="nav-label">导入报名</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/px/apply/applyDiscount?reFlag=1" data-index="25"><i class="fa "></i> <span class="nav-label">报名打折</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/px/apply/applyActive?reFlag=1" data-index="26"><i class="fa "></i> <span class="nav-label">报名激活</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/classReservation/list?status=1&amp;reqFlag=1" data-index="27"><i class="fa "></i> <span class="nav-label">候补预约</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/px/notepad/form" data-index="28"><i class="fa "></i> <span class="nav-label">报名缴费签字管理</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-child"></i> 
+                  			<span class="nav-label">学员管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/list" data-index="29"><i class="fa "></i> <span class="nav-label">学员信息管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/wjform" data-index="30"><i class="fa "></i> <span class="nav-label">外籍学员录入</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/query?reqFlag=1" data-index="31"><i class="fa "></i> <span class="nav-label">新老学员查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/signInSelect" data-index="32"><i class="fa "></i> <span class="nav-label">点到课次查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/upgradeList" data-index="33"><i class="fa "></i> <span class="nav-label">年级升级</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/student/classStudForm" data-index="34"><i class="fa "></i> <span class="nav-label">班级学员管理</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-user"></i> 
+                  			<span class="nav-label">教师管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/teacher/list" data-index="35"><i class="fa "></i> <span class="nav-label">教师信息管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/teachLeave/list" data-index="36"><i class="fa "></i> <span class="nav-label">教师请假</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/teachSched/list?reqFlag=1" data-index="37"><i class="fa "></i> <span class="nav-label">教师课表</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/teachLeave/reviewList" data-index="38"><i class="fa "></i> <span class="nav-label">请假审批</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tch/feeSet" data-index="39"><i class="fa "></i> <span class="nav-label">教师费用设置</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-comment-o"></i> 
+                  			<span class="nav-label">短信管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/stuForm" data-index="40"><i class="fa "></i> <span class="nav-label">学员短信发送</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/stuList?type=1" data-index="41"><i class="fa "></i> <span class="nav-label">学员短信查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/teacherSend" data-index="42"><i class="fa "></i> <span class="nav-label">教师短信发送</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/teacherList" data-index="43"><i class="fa "></i> <span class="nav-label">教师短信查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/staffSend" data-index="44"><i class="fa "></i> <span class="nav-label">职工短信发送</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/staffList" data-index="45"><i class="fa "></i> <span class="nav-label">职工短信查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/randomForm" data-index="46"><i class="fa "></i> <span class="nav-label">摇号短信发送</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/randomList" data-index="47"><i class="fa "></i> <span class="nav-label">摇号短信查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/userCornet/list" data-index="48"><i class="fa "></i> <span class="nav-label">短号设置</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/reply/list" data-index="49"><i class="fa "></i> <span class="nav-label">短信回复查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/list" data-index="50"><i class="fa "></i> <span class="nav-label">短信统计</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/stuFormAll" data-index="51"><i class="fa "></i> <span class="nav-label">全体学员短信发送</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/stuAllList" data-index="52"><i class="fa "></i> <span class="nav-label">全体学员短信查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/payNoticeForm" data-index="53"><i class="fa "></i> <span class="nav-label">报名未缴费短信通知</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/payNoticeSendList" data-index="54"><i class="fa "></i> <span class="nav-label">报名未缴费短信查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smsgroup/list" data-index="55"><i class="fa "></i> <span class="nav-label">短信自建组管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/smsGroupSend" data-index="56"><i class="fa "></i> <span class="nav-label">自建组短信发送</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smssend/smsGroupList?type=8" data-index="57"><i class="fa "></i> <span class="nav-label">自建组短信查询</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-rmb"></i> 
+                  			<span class="nav-label">财务管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/pay/?status=1&amp;reqFlag=1" data-index="58"><i class="fa "></i> <span class="nav-label">培训收费</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/charge/list?reqFlag=1" data-index="59"><i class="fa "></i> <span class="nav-label">缴费管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/charge/refundList?reqFlag=1" data-index="60"><i class="fa "></i> <span class="nav-label">退费记录</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/charge/statisticsList" data-index="61"><i class="fa "></i> <span class="nav-label">财务收费结算表</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/charge/registFee?reqFlag=1" data-index="62"><i class="fa "></i> <span class="nav-label">报名收费情况查询</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/charge/discountList?reqFlag=1" data-index="63"><i class="fa "></i> <span class="nav-label">打折清单</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/refundAudit/refundAuditList?auditType=2" data-index="64"><i class="fa "></i> <span class="nav-label">财务审核</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/pay/discountBatchList?status=1&amp;reqFlag=1" data-index="65"><i class="fa "></i> <span class="nav-label">批量打折</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/refundAudit/refundAuditList?auditType=1" data-index="66"><i class="fa "></i> <span class="nav-label">教务审核</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/fund/charge/secondRefundList?reqFlag=1" data-index="67"><i class="fa "></i> <span class="nav-label">退费金额调整</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-scissors"></i> 
+                  			<span class="nav-label">自动打折</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/discount/timeLimit/list" data-index="68"><i class="fa "></i> <span class="nav-label">限时自动打折</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/discount/class/list" data-index="69"><i class="fa "></i> <span class="nav-label">班级自动打折</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/discount/setting/form" data-index="70"><i class="fa "></i> <span class="nav-label">自动打折设置</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-calendar-minus-o"></i> 
+                  			<span class="nav-label">点到管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/userSignInList?reqFlag=1" data-index="71"><i class="fa "></i> <span class="nav-label">我要点到</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/signInedClass?reqFlag=1" data-index="72"><i class="fa "></i> <span class="nav-label">已点班级</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/unSignInClass?reqFlag=1" data-index="73"><i class="fa "></i> <span class="nav-label">未点到班级</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/iclass/unSignInClass?reqFlag=2" data-index="74"><i class="fa "></i> <span class="nav-label">应点未点</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ic/signIn/signInStatistic?reqFlag=1" data-index="75"><i class="fa "></i> <span class="nav-label">点到汇总</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-shopping-cart"></i> 
+                  			<span class="nav-label">支付管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/order/order/list" data-index="76"><i class="fa "></i> <span class="nav-label">订单管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/order/unPush/list" data-index="77"><i class="fa "></i> <span class="nav-label">未推送订单</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-share-alt"></i> 
+                  			<span class="nav-label">基础数据</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/bs/specialty?status=1&amp;name=&amp;subject=" data-index="78"><i class="fa "></i> <span class="nav-label">专业管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/bs/book" data-index="79"><i class="fa "></i> <span class="nav-label">教材管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/bs/classroom" data-index="80"><i class="fa "></i> <span class="nav-label">教室管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/bs/officeSpec" data-index="81"><i class="fa "></i> <span class="nav-label">部门专业分配</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/bs/userSpec?reqFlag=1" data-index="82"><i class="fa "></i> <span class="nav-label">人员专业分配</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/bs/allotDiscount" data-index="83"><i class="fa "></i> <span class="nav-label">打折理由分配</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-cog"></i> 
+                  			<span class="nav-label">系统管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/optUser/index" data-index="84"><i class="fa "></i> <span class="nav-label">用户管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/org/index" data-index="85"><i class="fa "></i> <span class="nav-label">机构管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/role/list" data-index="86"><i class="fa "></i> <span class="nav-label">角色管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/orgDict/index" data-index="87"><i class="fa "></i> <span class="nav-label">数据字典管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/manually/discount/" data-index="88"><i class="fa "></i> <span class="nav-label">人工打折管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/setting/form" data-index="89"><i class="fa "></i> <span class="nav-label">站点全局设置</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/district" data-index="90"><i class="fa "></i> <span class="nav-label">区域参数设置</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sms/smsApplySet/form" data-index="91"><i class="fa "></i> <span class="nav-label">短信设置</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/invoiceSetting/form" data-index="92"><i class="fa "></i> <span class="nav-label">增值税开票设置</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/banner" data-index="93"><i class="fa "></i> <span class="nav-label">Banner管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/orgSetting/form" data-index="94"><i class="fa "></i> <span class="nav-label">单位介绍及报名向导</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/sys/holiday/list" data-index="95"><i class="fa "></i> <span class="nav-label">节日管理</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-paw"></i> 
+                  			<span class="nav-label">教学统计分析</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/ageCompter?reqFlag=1" data-index="96"><i class="fa "></i> <span class="nav-label">学员年龄统计</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/titreCompter?reqFlag=1" data-index="97"><i class="fa "></i> <span class="nav-label">职称统计</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/degreeCompter?reqFlag=1" data-index="98"><i class="fa "></i> <span class="nav-label">学历统计</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/arrangeAnalysis?reqFlag=1" data-index="99"><i class="fa "></i> <span class="nav-label">教学安排分析</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/recruitAnalysis?reqFlag=1" data-index="100"><i class="fa "></i> <span class="nav-label">招生状况统计</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/newBornCompter?reqFlag=1" data-index="101"><i class="fa "></i> <span class="nav-label">新生统计</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/classRegister?reqFlag=1" data-index="102"><i class="fa "></i> <span class="nav-label">培训班登记表</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/classCheck?reqFlag=1" data-index="103"><i class="fa "></i> <span class="nav-label">教室登记表</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/teacherAct?reqFlag=1" data-index="104"><i class="fa "></i> <span class="nav-label">教务管理行事表</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/classStay?reqFlag=1" data-index="105"><i class="fa "></i> <span class="nav-label">班级留生率分析</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/tchingCompter/school?reqFlag=1" data-index="106"><i class="fa "></i> <span class="nav-label">生源地统计</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-heart"></i> 
+                  			<span class="nav-label">数据分析</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/dataCenter/recruit?reqFlag=1" data-index="107"><i class="fa "></i> <span class="nav-label">招生人数年度对比</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/dataCenter/stuAge?reqFlag=1" data-index="108"><i class="fa "></i> <span class="nav-label">学员年龄比例</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/dataCenter/stuSex?reqFlag=1" data-index="109"><i class="fa "></i> <span class="nav-label">学员男女比例</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/dataCenter/stuApplyNum?reqFlag=1" data-index="110"><i class="fa "></i> <span class="nav-label">报名门次</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/dataCenter/applyNum?reqFlag=1" data-index="111"><i class="fa "></i> <span class="nav-label">报名行为分析</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-gg-circle"></i> 
+                  			<span class="nav-label">活动报名</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/ac/wzActivity/list" data-index="112"><i class="fa "></i> <span class="nav-label">活动管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/acmem/wzActivityMember/list" data-index="113"><i class="fa "></i> <span class="nav-label">报名管理</span></a>
+                    			</li>
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/pin/wzPin/list" data-index="114"><i class="fa "></i> <span class="nav-label">核销人员管理</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-tablet"></i> 
+                  			<span class="nav-label">班牌管理</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/bp/classmanagements/list" data-index="115"><i class="fa "></i> <span class="nav-label">信息发布</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 	
+                 	
+                 	
+                  	<li>
+                  		<a href="">
+                  			<i class="fa fa-newspaper-o"></i> 
+                  			<span class="nav-label">新闻动态</span>
+                  			<span class="fa arrow"></span>
+                  		</a>
+                  		<ul class="nav nav-second-level collapse in">
+                  			
+                  				<li>
+                    				<a class="J_menuItem" href="/edumanage/news/classmanagements/list" data-index="116"><i class="fa "></i> <span class="nav-label">新闻发布</span></a>
+                    			</li>
+                  			
+                  		</ul>
+                  	</li>
+                 	
+                 	
+                 
+                 
+            
+                </ul>
+            </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 1050px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.9; z-index: 90; right: 1px;"></div></div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom">
+            	<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header" style="width:100%">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                        <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
+                            <div class="form-group" style="width: 200px; float: left;">
+                                <!-- <input type="text" placeholder="欢迎使用数字少年宫系统" class="form-control" name="top-search" id="top-search"> -->
+                            </div>
+                            <div style="line-height:60px;height:60px;width:1000px">
+                                <marquee onmouseout="this.start()" onmouseover="this.stop()" style="width:800px"><font size="+1" color="red">&nbsp;</font></marquee>
+                            </div>
+                        </form>
+            <!--              <form role="search" class="navbar-form-custom" style="width:550px" >
+
+                            
+                        </form> -->
+                        
+                        
+                    </div>
+                    
+                </nav>
+            </div>
+            <div class="row content-tabs">
+                <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+                </button>
+                <nav class="page-tabs J_menuTabs">
+                    <div class="page-tabs-content">
+                        <a href="javascript:;" class="active J_menuTab" data-id="/edumanage/home">首页</a>
+                    </div>
+                </nav>
+                <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+                </button>
+                <div class="btn-group roll-nav roll-right">
+                    <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+
+                    </button>
+                    <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                        <li class="J_tabShowActive"><a>定位当前选项卡</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="J_tabCloseAll"><a>关闭全部选项卡</a>
+                        </li>
+                        <li class="J_tabCloseOther"><a>关闭其他选项卡</a>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="roll-nav roll-right J_tabExit" onclick="logout();"><i class="fa fa fa-sign-out"></i> 退出</a>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                	<iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="/edumanage/home?sysCode=" frameborder="0" data-id="/edumanage/home" seamless=""></iframe>
+            </div>
+            <div class="footer">
+                <div class="pull-left"><!-- <a href="#">少年宫在线</a> &copy; 2015-2025 --></div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+       
+       
+    </div>
+
+    <!-- 管理端 AI 悬浮球：AI助手 / 学情分析 / 课堂质量（分权） -->
+    
+
+
+</body></html>

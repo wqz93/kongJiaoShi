@@ -1,0 +1,14 @@
+- generic [ref=e1]:
+  - generic [ref=e2]: 智慧少年宫服务平台
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - text: 系统登录
+      - generic [ref=e7]: LOGIN
+    - generic [ref=e8]:
+      - textbox "这是必填字段" [ref=e10]:
+        - /placeholder: 用户名
+      - textbox "这是必填字段" [ref=e12]:
+        - /placeholder: 密码
+      - textbox "验证码" [ref=e14]
+      - link "立刻登录" [ref=e15] [cursor=pointer]:
+        - /url: javascript:void(0);

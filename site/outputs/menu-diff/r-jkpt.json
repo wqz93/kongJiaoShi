@@ -1,0 +1,11 @@
+{
+ "name": "智能场馆",
+ "url": "https://www.qsnedu.com/edumanage/index?sysCode=jkpt",
+ "text": "厦门市思明区青少年宫\n吴奇志\n普通用户\n 系统设置\n 基础信息\n \n首页\n关闭操作\n 退出",
+ "apis": [
+  {
+   "url": "https://www.qsnedu.com/edumanage/static/common/skin-config.jsp",
+   "body": "\n"
+  }
+ ]
+}

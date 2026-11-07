@@ -1,0 +1,55 @@
+{
+  "cookies": [
+    {
+      "name": "edu.session.id",
+      "value": "c0eb9bb3-e2a2-40ce-98e6-97ec9e0d8149",
+      "domain": "www.qsnedu.com",
+      "path": "/edumanage",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "DCCA8FEDA9273755F3F8131D0F100EF6",
+      "domain": "www.qsnedu.com",
+      "path": "/edumanage",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "edu.session.id",
+      "value": "4ff030dd-8ae2-451c-bcda-9e61b5bfd2dd",
+      "domain": "www.qsnedu.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "token",
+      "value": "c0eb9bb3-e2a2-40ce-98e6-97ec9e0d8149",
+      "domain": "www.qsnedu.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "SERVERID",
+      "value": "449d28272f71b469d0c6784294bbdf5f|1791962603|1791962551",
+      "domain": "www.qsnedu.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

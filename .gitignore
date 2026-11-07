@@ -18,3 +18,7 @@ venv/
 # 系统
 .DS_Store
 Thumbs.db
+
+# Netlify 本地状态与内部数据
+.netlify/
+data.json

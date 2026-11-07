@@ -1,0 +1,68 @@
+{
+ "edu": {
+  "name": "培训管理系统",
+  "url": "https://www.qsnedu.com/edumanage/index",
+  "text": "厦门市思明区青少年宫\n吴奇志\n普通用户\n 开班管理\n 班级管理\n 报名管理\n 学员管理\n 教师管理\n 短信管理\n 财务管理\n 自动打折\n 点到管理\n 支付管理\n 基础数据\n 系统管理\n 教学统计分析\n 数据分析\n 活动报名\n 班牌管理\n 新闻动态\n \n首页\n关闭操作\n 退出",
+  "apis": [
+   {
+    "url": "https://www.qsnedu.com/edumanage/static/common/skin-config.jsp",
+    "body": "\n"
+   }
+  ]
+ },
+ "wz": {
+  "name": "活动系统",
+  "url": "https://www.qsnedu.com/edumanage/index?sysCode=wz",
+  "text": "厦门市思明区青少年宫\n吴奇志\n普通用户\n 综合活动\n 单项网络活动\n 在线答题\n 假日营（地面）活动\n 场馆活动管理\n \n首页\n关闭操作\n 退出",
+  "apis": [
+   {
+    "url": "https://www.qsnedu.com/edumanage/static/common/skin-config.jsp",
+    "body": "\n"
+   }
+  ]
+ },
+ "dat": {
+  "name": "青少年宫数据中心",
+  "url": "https://www.qsnedu.com/edumanage/index?sysCode=dat",
+  "text": "厦门市思明区青少年宫\n吴奇志\n普通用户\n 数据中心\n 数据大屏\n \n首页\n关闭操作\n 退出",
+  "apis": [
+   {
+    "url": "https://www.qsnedu.com/edumanage/static/common/skin-config.jsp",
+    "body": "\n"
+   }
+  ]
+ },
+ "sys": {
+  "name": "系统管理",
+  "url": "https://www.qsnedu.com/edumanage/index?sysCode=sys",
+  "text": "厦门市思明区青少年宫\n吴奇志\n普通用户\n 系统维护\n \n首页\n关闭操作\n 退出",
+  "apis": [
+   {
+    "url": "https://www.qsnedu.com/edumanage/static/common/skin-config.jsp",
+    "body": "\n"
+   }
+  ]
+ },
+ "tg": {
+  "name": "“双减”课后服务",
+  "url": "https://www.qsnedu.com/edumanage/index?sysCode=tg",
+  "text": "厦门市思明区青少年宫\n吴奇志\n普通用户\n 托管班管理\n 托管班报名管理\n 托管班财务管理\n 托管班设置\n \n首页\n关闭操作\n 退出",
+  "apis": [
+   {
+    "url": "https://www.qsnedu.com/edumanage/static/common/skin-config.jsp",
+    "body": "\n"
+   }
+  ]
+ },
+ "jkpt": {
+  "name": "智能场馆",
+  "url": "https://www.qsnedu.com/edumanage/index?sysCode=jkpt",
+  "text": "厦门市思明区青少年宫\n吴奇志\n普通用户\n 系统设置\n 基础信息\n \n首页\n关闭操作\n 退出",
+  "apis": [
+   {
+    "url": "https://www.qsnedu.com/edumanage/static/common/skin-config.jsp",
+    "body": "\n"
+   }
+  ]
+ }
+}

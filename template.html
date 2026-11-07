@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>移动端培训部聚合平台</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:#f2f4f8; color:#1f2329; }
+  .app { max-width:480px; margin:0 auto; min-height:100vh; background:#f2f4f8; padding-bottom:40px; }
+
+  /* 顶部 */
+  .header { background:linear-gradient(135deg,#2b5aed 0%,#4f7cff 100%); color:#fff; padding:18px 16px 14px; position:relative; }
+  .header h1 { font-size:19px; font-weight:600; }
+  .header .sub { font-size:12px; opacity:.85; margin-top:4px; }
+  .import-link { position:absolute; right:14px; top:18px; font-size:12px; color:#fff; opacity:.9;
+    border:1px solid rgba(255,255,255,.5); border-radius:14px; padding:3px 10px; background:transparent; }
+
+  /* 导入页 */
+  .imp-card { background:#fff; margin:14px 16px 0; border-radius:12px; padding:16px 14px;
+    box-shadow:0 1px 4px rgba(0,0,0,.04); }
+  .imp-title { font-size:16px; font-weight:600; margin-bottom:4px; }
+  .imp-desc { font-size:12px; color:#86909c; line-height:1.6; margin-bottom:12px; }
+  .imp-row { display:flex; align-items:center; gap:10px; padding:12px; border:1.5px dashed #e5e6eb;
+    border-radius:10px; margin-bottom:10px; }
+  .imp-row.done { border-style:solid; border-color:#00b42a33; background:#f6fcf8; }
+  .imp-icon { width:38px; height:38px; border-radius:8px; background:#eef3ff; color:#2b5aed;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none; }
+  .imp-info { flex:1; min-width:0; }
+  .imp-name { font-size:14px; font-weight:500; }
+  .imp-status { font-size:11px; color:#86909c; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .imp-status.ok { color:#00b42a; }
+  .imp-btn { flex:none; height:32px; padding:0 12px; border:1px solid #2b5aed; color:#2b5aed;
+    background:#fff; border-radius:8px; font-size:12.5px; }
+  .enter-btn { width:100%; height:46px; border:none; border-radius:10px; background:#2b5aed;
+    color:#fff; font-size:16px; font-weight:600; margin-top:14px; }
+  .enter-btn:disabled { background:#c9cdd4; }
+  .enter-btn:not(:disabled):active { opacity:.85; }
+  .reset-link { display:block; text-align:center; font-size:12px; color:#86909c; margin-top:12px;
+    background:none; border:none; width:100%; }
+  .imp-warn { font-size:11px; color:#ff7d00; margin-top:8px; display:none; }
+
+  /* 首页入口 */
+  .entry-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:14px 16px 0; }
+  .entry { background:#fff; border-radius:12px; padding:18px 14px; box-shadow:0 1px 4px rgba(0,0,0,.04); }
+  .entry:not(.disabled):active { transform:scale(.98); }
+  .entry.disabled { opacity:.55; }
+  .entry-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center;
+    justify-content:center; font-size:15px; font-weight:700; margin-bottom:10px; }
+  .entry-name { font-size:15px; font-weight:600; }
+  .entry-desc { font-size:11px; color:#86909c; margin-top:4px; line-height:1.5; }
+
+  /* 校区切换 */
+  .campus-bar { display:flex; gap:10px; padding:12px 16px 4px; }
+  .campus-tab { flex:1; text-align:center; padding:10px 0; border-radius:10px; background:#fff;
+    font-size:15px; font-weight:500; color:#4e5969; border:1.5px solid #e5e6eb; }
+  .campus-tab.active { background:#2b5aed; color:#fff; border-color:#2b5aed;
+    box-shadow:0 4px 10px rgba(43,90,237,.25); }
+  .campus-tab .cnt { display:block; font-size:11px; font-weight:400; opacity:.75; margin-top:2px; }
+
+  /* 功能导航 */
+  .nav { display:flex; gap:8px; padding:12px 16px 0; }
+  .nav button { flex:1; border:none; background:#fff; color:#4e5969; font-size:13px;
+    padding:9px 0; border-radius:8px; border:1px solid #e5e6eb; }
+  .nav button.active { color:#2b5aed; border-color:#2b5aed; font-weight:600; background:#eef3ff; }
+
+  /* 卡片 */
+  .card { background:#fff; margin:12px 16px 0; border-radius:12px; padding:14px;
+    box-shadow:0 1px 4px rgba(0,0,0,.04); }
+  .card h2 { font-size:15px; margin-bottom:4px; }
+  .card .tip { font-size:12px; color:#86909c; margin-bottom:10px; line-height:1.5; }
+
+  .row { display:flex; gap:8px; }
+  input[type=text], select { flex:1; height:40px; border:1px solid #e5e6eb; border-radius:8px;
+    padding:0 12px; font-size:14px; background:#fff; outline:none; }
+  input[type=text]:focus, select:focus { border-color:#2b5aed; }
+  .btn { height:40px; padding:0 18px; border:none; border-radius:8px; background:#2b5aed;
+    color:#fff; font-size:14px; font-weight:500; }
+  .btn:active { opacity:.85; }
+
+  /* 星期 chips */
+  .days { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .day-chip { padding:6px 12px; border-radius:16px; border:1px solid #e5e6eb; background:#fff;
+    font-size:13px; color:#4e5969; }
+  .day-chip.active { background:#2b5aed; color:#fff; border-color:#2b5aed; }
+
+  /* 结果区 */
+  .result { margin-top:12px; }
+  .room-block { border:1px solid #f0f0f0; border-radius:10px; padding:10px 12px; margin-bottom:10px; background:#fcfcfd; }
+  .room-head { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px; }
+  .room-name { font-size:15px; font-weight:600; }
+  .tag { font-size:11px; padding:2px 8px; border-radius:10px; background:#eef3ff; color:#2b5aed; }
+  .tag.gray { background:#f2f3f5; color:#86909c; }
+  .tag.green { background:#e8f7ee; color:#00b42a; }
+  .tag.orange { background:#fff7e8; color:#ff7d00; }
+
+  /* 表格 */
+  .tbl-wrap { overflow-x:auto; border:1px solid #f0f0f0; border-radius:8px; }
+  table.tbl { width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap; }
+  .tbl th { background:#f7f8fa; color:#4e5969; font-weight:600; padding:7px 8px; text-align:left;
+    border-bottom:1px solid #ebedf0; position:sticky; top:0; }
+  .tbl td { padding:7px 8px; border-bottom:1px solid #f2f3f5; color:#1f2329; vertical-align:top; }
+  .tbl tr:last-child td { border-bottom:none; }
+  .tbl td.t-name { white-space:normal; min-width:140px; line-height:1.5; }
+  .tbl td.t-time { color:#2b5aed; }
+  .tbl td.t-ok { color:#00b42a; }
+  .tbl td.t-full { color:#f53f3f; }
+  .tbl td.t-room { font-weight:600; white-space:normal; min-width:72px; }
+  .tbl td.t-func { color:#86909c; white-space:normal; min-width:64px; }
+  .tbl td.c-free { color:#00b42a; background:#f0fbf4; text-align:center; font-weight:600; }
+  .tbl td.c-busy { color:#c9cdd4; text-align:center; }
+  .tbl th.c-slot { text-align:center; min-width:44px; }
+
+  .empty { text-align:center; color:#86909c; font-size:13px; padding:24px 0; }
+  .summary { font-size:12px; color:#86909c; margin:10px 2px 6px; }
+  .footer { text-align:center; font-size:11px; color:#c9cdd4; margin-top:20px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= 首页（功能入口） ================= -->
+  <div id="page-home">
+    <div class="header">
+      <h1>移动端培训部聚合平台</h1>
+      <div class="sub">厦港校区 · 镇海校区</div>
+    </div>
+    <div class="entry-grid">
+      <div class="entry" onclick="goEntry('import')">
+        <div class="entry-icon" style="background:#eef3ff;color:#2b5aed">简章</div>
+        <div class="entry-name">查询招生简章</div>
+        <div class="entry-desc">教室查询 / 功能查询 / 空教室查询</div>
+      </div>
+      <div class="entry disabled">
+        <div class="entry-icon" style="background:#f2f3f5;color:#a9aeb8">待</div>
+        <div class="entry-name">敬请期待</div>
+        <div class="entry-desc">更多功能入口陆续上线</div>
+      </div>
+      <div class="entry disabled">
+        <div class="entry-icon" style="background:#f2f3f5;color:#a9aeb8">待</div>
+        <div class="entry-name">敬请期待</div>
+        <div class="entry-desc">更多功能入口陆续上线</div>
+      </div>
+      <div class="entry disabled">
+        <div class="entry-icon" style="background:#f2f3f5;color:#a9aeb8">待</div>
+        <div class="entry-name">敬请期待</div>
+        <div class="entry-desc">更多功能入口陆续上线</div>
+      </div>
+    </div>
+    <div class="footer">移动端培训部聚合平台</div>
+  </div>
+
+  <!-- ================= 导入页面 ================= -->
+  <div id="page-import" style="display:none">
+    <div class="header">
+      <h1>查询招生简章</h1>
+      <div class="sub">第一步 · 导入数据</div>
+      <button class="import-link" onclick="goHome()">‹ 首页</button>
+    </div>
+
+    <div class="imp-card">
+      <div class="imp-title">导入数据文件</div>
+      <div class="imp-desc">请依次导入本学期两份数据文件（仅在本机浏览器内解析，不会上传）。<br>两个文件都导入后才能进入查询页面。</div>
+
+      <div class="imp-row" id="rowZs">
+        <div class="imp-icon">简章</div>
+        <div class="imp-info">
+          <div class="imp-name">招生简章.xls</div>
+          <div class="imp-status" id="stZs">未导入</div>
+        </div>
+        <button class="imp-btn" onclick="document.getElementById('fileZs').click()">选择文件</button>
+        <input type="file" id="fileZs" accept=".xls,.xlsx" style="display:none" onchange="onFile(this,'zs')">
+      </div>
+
+      <div class="imp-row" id="rowRoom">
+        <div class="imp-icon">功能</div>
+        <div class="imp-info">
+          <div class="imp-name">教室功能.xlsx</div>
+          <div class="imp-status" id="stRoom">未导入</div>
+        </div>
+        <button class="imp-btn" onclick="document.getElementById('fileRoom').click()">选择文件</button>
+        <input type="file" id="fileRoom" accept=".xls,.xlsx" style="display:none" onchange="onFile(this,'room')">
+      </div>
+
+      <div class="imp-warn" id="impWarn"></div>
+      <button class="enter-btn" id="enterBtn" disabled onclick="enterQuery()">进入查询页面 →</button>
+      <button class="reset-link" id="resetBtn" style="display:none" onclick="resetData()">清除已导入的数据，重新导入</button>
+    </div>
+
+    <div class="footer">数据来源：招生简章.xls · 教室功能.xlsx</div>
+  </div>
+
+  <!-- ================= 查询页面 ================= -->
+  <div id="page-query" style="display:none">
+    <div class="header">
+      <h1>查询招生简章</h1>
+      <div class="sub" id="statLine"></div>
+      <button class="import-link" style="right:96px" onclick="goHome()">‹ 首页</button>
+      <button class="import-link" onclick="goImport()">重新导入</button>
+    </div>
+
+    <div class="campus-bar">
+      <div class="campus-tab active" data-c="厦港" onclick="setCampus('厦港')">厦港校区<span class="cnt" id="cntXG"></span></div>
+      <div class="campus-tab" data-c="镇海" onclick="setCampus('镇海')">镇海校区<span class="cnt" id="cntZH"></span></div>
+    </div>
+
+    <div class="nav">
+      <button class="active" data-p="room" onclick="setPanel('room')">教室查询</button>
+      <button data-p="func" onclick="setPanel('func')">功能查询</button>
+      <button data-p="free" onclick="setPanel('free')">空教室查询</button>
+    </div>
+
+    <!-- 教室查询 -->
+    <div class="card" id="panel-room">
+      <h2>教室查询</h2>
+      <div class="tip">输入教室号模糊匹配（如输入 409，可匹配出「教室409」），查看该教室的功能与排课。</div>
+      <div class="row">
+        <input type="text" id="roomInput" placeholder="如：409 / 钢琴 / 礼堂" onkeydown="if(event.key==='Enter')queryRoom()">
+        <button class="btn" onclick="queryRoom()">查询</button>
+      </div>
+      <div class="result" id="roomResult"></div>
+    </div>
+
+    <!-- 功能查询 -->
+    <div class="card" id="panel-func" style="display:none">
+      <h2>功能查询</h2>
+      <div class="tip">从教室功能表中选择功能（如「钢琴」），列出具备该功能的教室及排课情况。</div>
+      <div class="row">
+        <select id="funcSelect"></select>
+        <button class="btn" onclick="queryFunc()">查询</button>
+      </div>
+      <div class="result" id="funcResult"></div>
+    </div>
+
+    <!-- 空教室查询 -->
+    <div class="card" id="panel-free" style="display:none">
+      <h2>空教室查询</h2>
+      <div class="tip">周末每天 6 节（上午 2 节、下午 2 节、晚上 2 节），周一至周五仅晚上 2 节。表格中「空」为空闲时段，「—」为已排课，可左右滑动查看。</div>
+      <div class="days" id="dayChips"></div>
+      <button class="btn" style="width:100%" onclick="queryFree()">查询空教室</button>
+      <div class="result" id="freeResult"></div>
+    </div>
+
+    <div class="footer">数据来源：招生简章.xls · 教室功能.xlsx</div>
+  </div>
+</div>
+
+<script>
+const DAYS = ['周一','周二','周三','周四','周五','周六','周日'];
+const DAYMAP = {'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'日':7};
+const SLOT_DEF = {
+  weekend: [
+    {short:'上1', label:'上午1节 08:30-10:00', s:510,  e:600},
+    {short:'上2', label:'上午2节 10:10-11:40', s:610,  e:700},
+    {short:'下1', label:'下午1节 14:00-15:30', s:840,  e:930},
+    {short:'下2', label:'下午2节 15:40-17:10', s:940,  e:1030},
+    {short:'晚1', label:'晚上1节 17:20-18:50', s:1040, e:1130},
+    {short:'晚2', label:'晚上2节 19:00-20:30', s:1140, e:1230},
+  ],
+  weekday: [
+    {short:'晚1', label:'晚上1节 17:20-18:50', s:1040, e:1130},
+    {short:'晚2', label:'晚上2节 19:00-20:30', s:1140, e:1230},
+  ],
+};
+const slotDef = day => (day >= 6 ? SLOT_DEF.weekend : SLOT_DEF.weekday);
+
+let DATA = null;                 // 仅来自导入，无内置兜底
+let zsParsed = null, roomParsed = null;
+let zsOk = false, roomOk = false;
+let campus = '厦港';
+let freeDay = 6;
+
+/* ================= 导入解析 ================= */
+function normRoom(raw, campus) {
+  let r = String(raw || '').trim();
+  if (!r) return null;
+  if (r.startsWith('厦港')) campus = '厦港';
+  else if (r.startsWith('镇海')) campus = '镇海';
+  r = r.replace(/^(厦港|镇海)教室/, '');
+  r = r.replace('镇海二楼大礼堂', '大礼堂').replace('镇海二楼礼堂02', '礼堂02');
+  r = r.replace(/^厦港/, '');
+  if (['钢琴教室','大礼堂','礼堂02'].includes(r)) campus = '镇海';
+  if (r.startsWith('思明小学')) campus = '厦港';
+  return { campus, name: r };
+}
+
+function cellText(v) {
+  if (v == null) return '';
+  if (typeof v === 'number') return String(v);
+  return String(v).trim();
+}
+
+/* 解析招生简章 → { classes, sessions, extraRooms } */
+function parseZhaosheng(wb) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const grid = XLSX.utils.sheet_to_json(ws, { header:1, raw:true, defval:'' });
+  let hi = grid.findIndex(row => row.some(c => cellText(c) === '班级名称'));
+  if (hi < 0) throw new Error('未找到「班级名称」表头');
+  const col = {};
+  grid[hi].forEach((c, i) => { col[cellText(c)] = i; });
+  const need = ['班级名称','区域','专业','上课时间','教室','教师','剩余名额','总计'];
+  for (const n of need) if (col[n] == null) throw new Error('缺少列：' + n);
+
+  const classes = [], sessions = [], extra = { '厦港': new Set(), '镇海': new Set() };
+  for (let r = hi + 1; r < grid.length; r++) {
+    const row = grid[r];
+    const name = cellText(row[col['班级名称']]);
+    if (!name) continue;
+    const area = cellText(row[col['区域']]);
+    const cam = area.includes('镇海') ? '镇海' : '厦港';
+    const roomRaw = cellText(row[col['教室']]);
+    const timeTxt = cellText(row[col['上课时间']]);
+    const left = row[col['剩余名额']], fee = row[col['总计']];
+
+    const rooms = [];
+    roomRaw.split(/[\n\r]+/).forEach(p => {
+      const nr = normRoom(p, cam);
+      if (nr) { rooms.push(nr.name); extra[nr.campus].add(nr.name); }
+    });
+    const uniqRooms = [...new Set(rooms)];
+
+    classes.push({
+      n: name, c: cam, major: cellText(row[col['专业']]), time: timeTxt,
+      rooms: uniqRooms, roomRaw: roomRaw.replace(/\n/g, ' '),
+      t: cellText(row[col['教师']]),
+      left: typeof left === 'number' ? left : null,
+      fee: typeof fee === 'number' ? fee : null,
+    });
+
+    timeTxt.split(/[\n\r]+/).forEach(seg => {
+      const days = [...seg.matchAll(/周([一二三四五六日])/g)].map(m => DAYMAP[m[1]]);
+      const m = seg.match(/(\d{1,2}):(\d{2})\s*[-~—]\s*(\d{1,2}):(\d{2})/);
+      if (!days.length || !m) return;
+      const s = +m[1] * 60 + +m[2], e = +m[3] * 60 + +m[4];
+      roomRaw.split(/[\n\r]+/).forEach(p => {
+        const nr = normRoom(p, cam);
+        if (!nr) return;
+        days.forEach(d => sessions.push({ c: nr.campus, room: nr.name, day: d, s, e }));
+      });
+    });
+  }
+  return { classes, sessions, extraRooms: extra };
+}
+
+/* 解析教室功能 → { 厦港:[{name,funcs}], 镇海:[...] } */
+function parseRoomFunc(wb) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const grid = XLSX.utils.sheet_to_json(ws, { header:1, raw:true, defval:'' });
+  const out = { '厦港': [], '镇海': [] };
+  const blocks = [];
+  for (let r = 0; r < Math.min(5, grid.length); r++) {
+    grid[r].forEach((c, i) => {
+      const m = cellText(c).match(/^(厦港|镇海).*教室/);
+      if (m) blocks.push({ campus: m[1], col: i });
+    });
+  }
+  if (!blocks.length) throw new Error('未找到校区教室表头（如「厦港教室26间」）');
+  blocks.forEach(b => {
+    for (let r = 0; r < grid.length; r++) {
+      const name = cellText((grid[r] || [])[b.col + 1]);
+      const func = cellText((grid[r] || [])[b.col + 2]);
+      if (!name || name === '教室') continue;
+      out[b.campus].push({
+        name,
+        funcs: func ? func.split(/[、,，/]+/).map(s => s.trim()).filter(Boolean) : ['未登记'],
+      });
+    }
+  });
+  return out;
+}
+
+/* 合并：功能表 + 简章中出现的额外教室 */
+function mergeData(zs, rf) {
+  const rooms = { '厦港': [...rf['厦港']], '镇海': [...rf['镇海']] };
+  ['厦港','镇海'].forEach(c => {
+    const known = new Set(rooms[c].map(r => r.name));
+    [...zs.extraRooms[c]].sort().forEach(n => {
+      if (!known.has(n)) rooms[c].push({ name: n, funcs: ['未登记'] });
+    });
+  });
+  return { rooms, classes: zs.classes, sessions: zs.sessions };
+}
+
+function onFile(input, kind) {
+  const file = input.files[0];
+  if (!file) return;
+  if (typeof XLSX === 'undefined') {
+    showWarn('解析库加载失败（首次使用需联网加载一次），请检查网络后重试。');
+    input.value = ''; return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      if (kind === 'zs') {
+        zsParsed = parseZhaosheng(wb);
+        zsOk = true;
+        setRowState('rowZs', 'stZs', '✓ ' + file.name + ' · ' + zsParsed.classes.length + ' 个班');
+      } else {
+        roomParsed = parseRoomFunc(wb);
+        roomOk = true;
+        const n = roomParsed['厦港'].length + roomParsed['镇海'].length;
+        setRowState('rowRoom', 'stRoom', '✓ ' + file.name + ' · ' + n + ' 间教室');
+      }
+      applyImport();
+    } catch (err) {
+      showWarn('「' + file.name + '」解析失败：' + err.message);
+    }
+    input.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function setRowState(rowId, stId, text) {
+  document.getElementById(rowId).classList.add('done');
+  const st = document.getElementById(stId);
+  st.textContent = text;
+  st.classList.add('ok');
+  document.getElementById('impWarn').style.display = 'none';
+}
+function showWarn(msg) {
+  const w = document.getElementById('impWarn');
+  w.textContent = '⚠ ' + msg;
+  w.style.display = 'block';
+}
+function refreshEnter() {
+  document.getElementById('enterBtn').disabled = !(zsOk && roomOk);
+}
+
+/* 导入齐后重建数据并持久化 */
+function applyImport() {
+  refreshEnter();
+  if (!(zsOk && roomOk)) return;
+  DATA = mergeData(zsParsed, roomParsed);
+  try { localStorage.setItem('agg_imported', JSON.stringify(DATA)); } catch (e) {}
+  document.getElementById('resetBtn').style.display = '';
+}
+
+function resetData() {
+  localStorage.removeItem('agg_imported');
+  DATA = zsParsed = roomParsed = null;
+  zsOk = roomOk = false;
+  ['rowZs','rowRoom'].forEach(id => document.getElementById(id).classList.remove('done'));
+  ['stZs','stRoom'].forEach(id => {
+    const st = document.getElementById(id);
+    st.textContent = '未导入';
+    st.classList.remove('ok');
+  });
+  document.getElementById('resetBtn').style.display = 'none';
+  refreshEnter();
+}
+
+/* ================= 页面切换 ================= */
+const PAGES = ['page-home', 'page-import', 'page-query'];
+function showPage(id) {
+  PAGES.forEach(p => document.getElementById(p).style.display = p === id ? '' : 'none');
+}
+function goHome() { showPage('page-home'); }
+function goEntry(entry) {
+  if (entry === 'import') showPage('page-import');
+}
+function enterQuery() {
+  if (!DATA) return;
+  showPage('page-query');
+  initQuery();
+}
+function goImport() { showPage('page-import'); }
+
+/* ================= 查询页 ================= */
+const esc = s => String(s ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const roomsOf = c => DATA.rooms[c] || [];
+const classesOf = (c, room) => DATA.classes.filter(k => k.c === c && k.rooms.includes(room));
+
+function funcTags(room) {
+  if (!room.funcs.length) return '';
+  if (room.funcs[0] === '未登记') return '<span class="tag gray">功能未登记</span>';
+  return room.funcs.map(f => `<span class="tag">${esc(f)}</span>`).join('');
+}
+
+/* 班级表格（按 周几→开始时间 排序） */
+function timeKey(k) {
+  const t = String(k.time || '');
+  const dm = t.match(/周([一二三四五六日])/);
+  const tm = t.match(/(\d{1,2}):(\d{2})/);
+  const day = dm ? DAYMAP[dm[1]] : 8;              // 无星期的排最后
+  const min = tm ? (+tm[1]) * 60 + (+tm[2]) : 9999;
+  return day * 10000 + min;
+}
+function clsTable(cls) {
+  if (!cls.length) return '<div class="empty">本学期暂无班级使用该教室</div>';
+  const sorted = [...cls].sort((a, b) => timeKey(a) - timeKey(b));
+  return `<div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>班级名称</th><th>上课时间</th><th>教师</th><th>剩余名额</th></tr></thead>
+    <tbody>${sorted.map(k => `<tr>
+      <td class="t-name">${esc(k.n)}</td>
+      <td class="t-time">${esc(k.time) || '未定'}</td>
+      <td>${esc(k.t)}</td>
+      <td class="${k.left == null ? '' : k.left > 0 ? 't-ok' : 't-full'}">${k.left == null ? '—' : k.left > 0 ? '剩' + k.left : '已满'}</td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+function roomBlocks(matched) {
+  return matched.map(r => {
+    const cls = classesOf(campus, r.name);
+    return `<div class="room-block">
+      <div class="room-head"><span class="room-name">${esc(campus)}教室${esc(r.name)}</span>${funcTags(r)}
+        <span class="tag ${cls.length ? 'orange' : 'green'}">${cls.length ? cls.length + ' 个班' : '暂无排课'}</span></div>
+      ${clsTable(cls)}
+    </div>`;
+  }).join('');
+}
+
+function setCampus(c) {
+  campus = c;
+  document.querySelectorAll('.campus-tab').forEach(t => t.classList.toggle('active', t.dataset.c === c));
+  fillFuncSelect();
+  clearResults();
+}
+function setPanel(p) {
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.p === p));
+  ['room','func','free'].forEach(x => document.getElementById('panel-' + x).style.display = x === p ? '' : 'none');
+}
+function clearResults() {
+  ['roomResult','funcResult','freeResult'].forEach(id => document.getElementById(id).innerHTML = '');
+}
+
+function queryRoom() {
+  const q = document.getElementById('roomInput').value.trim();
+  const box = document.getElementById('roomResult');
+  if (!q) { box.innerHTML = '<div class="empty">请输入教室关键字</div>'; return; }
+  const matched = roomsOf(campus).filter(r => r.name.includes(q));
+  if (!matched.length) { box.innerHTML = `<div class="empty">「${esc(campus)}校区」未找到匹配「${esc(q)}」的教室</div>`; return; }
+  box.innerHTML = `<div class="summary">匹配到 ${matched.length} 间教室</div>` + roomBlocks(matched);
+}
+
+function fillFuncSelect() {
+  const set = new Set();
+  roomsOf(campus).forEach(r => r.funcs.forEach(f => f !== '未登记' && set.add(f)));
+  document.getElementById('funcSelect').innerHTML =
+    [...set].map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('');
+}
+function queryFunc() {
+  const f = document.getElementById('funcSelect').value;
+  const box = document.getElementById('funcResult');
+  const matched = roomsOf(campus).filter(r => r.funcs.includes(f));
+  if (!matched.length) { box.innerHTML = `<div class="empty">该校区没有功能为「${esc(f)}」的教室</div>`; return; }
+  box.innerHTML = `<div class="summary">「${esc(f)}」功能教室共 ${matched.length} 间</div>` + roomBlocks(matched);
+}
+
+function renderDayChips() {
+  document.getElementById('dayChips').innerHTML = DAYS.map((d, i) =>
+    `<div class="day-chip ${i + 1 === freeDay ? 'active' : ''}" onclick="pickDay(${i + 1})">${d}</div>`).join('');
+}
+function pickDay(d) { freeDay = d; renderDayChips(); }
+
+/* 空教室：矩阵表格 */
+function queryFree() {
+  const box = document.getElementById('freeResult');
+  const defs = slotDef(freeDay);
+  let fullFree = 0;
+  const rows = roomsOf(campus).map(r => {
+    const ses = DATA.sessions.filter(s => s.c === campus && s.room === r.name && s.day === freeDay);
+    const busy = defs.map(d => ses.some(s => s.s < d.e && s.e > d.s));
+    const freeCnt = busy.filter(b => !b).length;
+    if (freeCnt === defs.length) fullFree++;
+    return { r, busy, freeCnt };
+  });
+  // 空闲多的排前面
+  rows.sort((a, b) => b.freeCnt - a.freeCnt);
+  box.innerHTML = `<div class="summary">${DAYS[freeDay - 1]} · 全天空闲 ${fullFree} 间 / 共 ${rows.length} 间 · 列含义：${defs.map(d => d.short + '=' + d.label).join('，')}</div>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>教室</th><th>功能</th>${defs.map(d => `<th class="c-slot">${d.short}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(({r, busy}) => `<tr>
+      <td class="t-room">${esc(r.name)}</td>
+      <td class="t-func">${esc(r.funcs.join('、'))}</td>
+      ${busy.map(b => b ? '<td class="c-busy">—</td>' : '<td class="c-free">空</td>').join('')}
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+function initQuery() {
+  const xgC = DATA.classes.filter(k => k.c === '厦港').length;
+  const zhC = DATA.classes.filter(k => k.c === '镇海').length;
+  document.getElementById('statLine').textContent =
+    `共 ${DATA.classes.length} 个班级 · 厦港 ${roomsOf('厦港').length} 间教室 / 镇海 ${roomsOf('镇海').length} 间教室`;
+  document.getElementById('cntXG').textContent = `${roomsOf('厦港').length} 教室 · ${xgC} 班`;
+  document.getElementById('cntZH').textContent = `${roomsOf('镇海').length} 教室 · ${zhC} 班`;
+  fillFuncSelect();
+  renderDayChips();
+  clearResults();
+}
+
+/* 启动：若上次已导入并持久化，直接恢复导入状态 */
+(function boot() {
+  try {
+    const saved = localStorage.getItem('agg_imported');
+    if (saved) {
+      DATA = JSON.parse(saved);
+      zsOk = roomOk = true;
+      setRowState('rowZs', 'stZs', '✓ 已导入（上次数据生效中，可重新选择文件覆盖）');
+      setRowState('rowRoom', 'stRoom', '✓ 已导入（上次数据生效中，可重新选择文件覆盖）');
+      document.getElementById('resetBtn').style.display = '';
+      refreshEnter();
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
