@@ -19,6 +19,8 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Netlify 本地状态与内部数据
+# 本地部署/构建产物（不入库）
 .netlify/
 data.json
+site/
+.local/
